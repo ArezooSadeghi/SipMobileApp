@@ -15,12 +15,15 @@
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_sip_mobile_app_launcher"
-        android:supportsRtl="false"
         android:theme="@style/Theme.SipMobileApp"
         android:usesCleartextTraffic="true">
+        <activity android:name=".view.activity.AnswerContainerActivity"></activity>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".view.activity.GalleryContainerActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.activity.PatientContainerActivity"
             android:screenOrientation="portrait" />

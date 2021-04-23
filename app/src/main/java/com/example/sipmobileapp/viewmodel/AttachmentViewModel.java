@@ -2,6 +2,7 @@ package com.example.sipmobileapp.viewmodel;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -43,8 +44,11 @@ public class AttachmentViewModel extends AndroidViewModel {
     private SingleLiveEvent<AttachResult> updateGallery = new SingleLiveEvent<>();
 
     private SingleLiveEvent<Map<Bitmap, String>> showFullScreenImage = new SingleLiveEvent<>();
+    private SingleLiveEvent<Map<Uri, String>> testShowFullScreenImage = new SingleLiveEvent<>();
 
     private SingleLiveEvent<Integer> deleteImageFromGallery = new SingleLiveEvent<>();
+
+    private SingleLiveEvent<Boolean> yesDelete = new SingleLiveEvent<>();
 
     public AttachmentViewModel(@NonNull Application application) {
         super(application);
@@ -143,8 +147,24 @@ public class AttachmentViewModel extends AndroidViewModel {
         return deleteImageFromGallery;
     }
 
+    public SingleLiveEvent<Map<Uri, String>> getTestShowFullScreenImage() {
+        return testShowFullScreenImage;
+    }
+
+    public SingleLiveEvent<Boolean> getYesDelete() {
+        return yesDelete;
+    }
+
     public ServerData getServerData(String centerName) {
         return repository.getServerData(centerName);
+    }
+
+    public void getPatientAttachmentListService(String newBaseUrl) {
+        repository.getPatientAttachmentListService(newBaseUrl);
+    }
+
+    public void getAttachInfoService(String newBaseUrl) {
+        repository.getAttachInfoService(newBaseUrl);
     }
 
     public void getAddAttachService(String newBaseUrl) {
@@ -153,14 +173,6 @@ public class AttachmentViewModel extends AndroidViewModel {
 
     public void getDeleteAttachService(String newBaseUrl) {
         repository.getDeleteAttachService(newBaseUrl);
-    }
-
-    public void getAttachInfoService(String newBaseUrl) {
-        repository.getAttachInfoService(newBaseUrl);
-    }
-
-    public void getPatientAttachmentListService(String newBaseUrl) {
-        repository.getPatientAttachmentListService(newBaseUrl);
     }
 
     public void patientAttachmentList(String userLoginKey, int sickID) {

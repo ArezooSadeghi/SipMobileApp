@@ -160,6 +160,7 @@ public class LoginFragment extends Fragment {
             public void onChanged(UserResult userResult) {
                 SipMobileAppPreferences.setUserLoginKey(getContext(), userResult.getUsers()[0].getUserLoginKey());
                 SipMobileAppPreferences.setCenterName(getContext(), lastValueSpinner);
+                SipMobileAppPreferences.setUsername(getContext(), userResult.getUsers()[0].getUser_Name());
                 Intent intent = PatientContainerActivity.newIntent(getContext());
                 startActivity(intent);
                 getActivity().finish();

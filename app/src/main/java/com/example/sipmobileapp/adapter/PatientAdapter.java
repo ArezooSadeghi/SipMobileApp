@@ -50,7 +50,9 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientH
             @Override
             public void onClick(View view) {
                 PowerMenu powerMenu = new PowerMenu.Builder(context)
-                        .addItem(new PowerMenuItem("مشاهده مستندات"))
+                        .addItem(new PowerMenuItem("مشاهده مستندات", R.drawable.magnifier))
+                        .addItem(new PowerMenuItem("جوابدهی"))
+                        .setSize(330, 400)
                         .build();
 
                 powerMenu.setOnMenuItemClickListener(new OnMenuItemClickListener<PowerMenuItem>() {
@@ -59,6 +61,10 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientH
                         switch (position) {
                             case 0:
                                 viewModel.getNavigateToGallery().setValue(patientInfo);
+                                powerMenu.dismiss();
+                                break;
+                            case 1:
+                                viewModel.getNavigateToAnswer().setValue(patientInfo.getPatientID());
                                 powerMenu.dismiss();
                         }
                     }

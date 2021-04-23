@@ -21,6 +21,8 @@ public class PatientViewModel extends AndroidViewModel {
 
     private SingleLiveEvent<PatientInfo> navigateToGallery = new SingleLiveEvent<>();
 
+    private SingleLiveEvent<Integer> navigateToAnswer = new SingleLiveEvent<>();
+
     public PatientViewModel(@NonNull Application application) {
         super(application);
 
@@ -51,6 +53,10 @@ public class PatientViewModel extends AndroidViewModel {
 
     public SingleLiveEvent<PatientInfo> getNavigateToGallery() {
         return navigateToGallery;
+    }
+
+    public SingleLiveEvent<Integer> getNavigateToAnswer() {
+        return navigateToAnswer;
     }
 
     public ServerData getServerData(String centerName) {

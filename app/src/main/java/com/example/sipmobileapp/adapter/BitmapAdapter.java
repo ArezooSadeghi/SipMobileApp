@@ -2,6 +2,7 @@ package com.example.sipmobileapp.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,6 @@ import com.example.sipmobileapp.R;
 import com.example.sipmobileapp.databinding.BitmapAdapterItemBinding;
 import com.example.sipmobileapp.viewmodel.AttachmentViewModel;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,8 @@ public class BitmapAdapter extends RecyclerView.Adapter<BitmapAdapter.BitmapHold
     private Context context;
     private List<Bitmap> bitmapList;
     private AttachmentViewModel viewModel;
-    private Map<Bitmap, String> map;
+    private Map<Bitmap, String> mapBitmap;
+    private Map<Uri, String> mapUri;
 
     public BitmapAdapter(Context context, List<Bitmap> bitmapList, AttachmentViewModel viewModel) {
         this.context = context;
@@ -33,8 +34,12 @@ public class BitmapAdapter extends RecyclerView.Adapter<BitmapAdapter.BitmapHold
         this.viewModel = viewModel;
     }
 
-    public void setMap(Map<Bitmap, String> map) {
-        this.map = map;
+    public void setMapBitmap(Map<Bitmap, String> mapBitmap) {
+        this.mapBitmap = mapBitmap;
+    }
+
+    public void setMapUri(Map<Uri, String> mapUri) {
+        this.mapUri = mapUri;
     }
 
     @NonNull
@@ -54,10 +59,16 @@ public class BitmapAdapter extends RecyclerView.Adapter<BitmapAdapter.BitmapHold
             @Override
             public void onClick(View view) {
                 Bitmap bitmap = bitmapList.get(position);
-                String imageName = map.get(bitmap);
-                Map<Bitmap, String> map = new HashMap<>();
-                map.put(bitmap, imageName);
-                viewModel.getShowFullScreenImage().setValue(map);
+                String imageName = mapBitmap.get(bitmap);
+                Uri uri = null;
+                for (Map.Entry<Uri, String> entry : mapUri.entrySet()) {
+                    if (entry.getValue().equals(imageName)) {
+                        uri = entry.getKey();
+                    }
+                }
+                Map<Uri, String> mapUri = new HashMap<>();
+                mapUri.put(uri, imageName);
+                viewModel.getTestShowFullScreenImage().setValue(mapUri);
             }
         });
     }

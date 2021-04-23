@@ -25,6 +25,7 @@ import com.example.sipmobileapp.model.PatientInfo;
 import com.example.sipmobileapp.model.PatientResult;
 import com.example.sipmobileapp.model.ServerData;
 import com.example.sipmobileapp.utils.SipMobileAppPreferences;
+import com.example.sipmobileapp.view.activity.AnswerContainerActivity;
 import com.example.sipmobileapp.view.activity.GalleryContainerActivity;
 import com.example.sipmobileapp.view.activity.LoginContainerActivity;
 import com.example.sipmobileapp.viewmodel.PatientViewModel;
@@ -176,6 +177,14 @@ public class PatientFragment extends Fragment {
                 binding.txtNoPatient.setVisibility(View.VISIBLE);
                 ErrorDialogFragment fragment = ErrorDialogFragment.newInstance("اتصال به اینترنت با خطا مواجه شد");
                 fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
+            }
+        });
+
+        viewModel.getNavigateToAnswer().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer patientID) {
+                Intent intent = AnswerContainerActivity.newIntent(getContext(), patientID);
+                startActivity(intent);
             }
         });
     }

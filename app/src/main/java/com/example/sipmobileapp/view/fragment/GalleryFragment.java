@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,7 +32,6 @@ import com.example.sipmobileapp.model.ServerData;
 import com.example.sipmobileapp.utils.SipMobileAppPreferences;
 import com.example.sipmobileapp.viewmodel.AttachmentViewModel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,7 +50,8 @@ public class GalleryFragment extends Fragment {
     private List<AttachInfo> attachInfoList = new ArrayList<>();
     private List<Bitmap> oldBitmapList = new ArrayList<>();
     private List<Bitmap> newBitmapList = new ArrayList<>();
-    private Map<Bitmap, String> map = new HashMap<>();
+    private Map<Bitmap, String> mapBitmap = new HashMap<>();
+    private Map<Uri, String> mapUri = new HashMap<>();
 
     private static final int SPAN_COUNT = 3;
     private static final int REQUEST_CODE_CAMERA_PERMISSION = 0;
@@ -244,23 +245,19 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-        viewModel.getShowFullScreenImage().observe(getViewLifecycleOwner(), new Observer<Map<Bitmap, String>>() {
+        viewModel.getTestShowFullScreenImage().observe(getViewLifecycleOwner(), new Observer<Map<Uri, String>>() {
             @Override
-            public void onChanged(Map<Bitmap, String> map) {
-                Bitmap bitmap = null;
+            public void onChanged(Map<Uri, String> map) {
+                Uri uri = null;
                 String imageName = "";
-                for (Map.Entry<Bitmap, String> entry : map.entrySet()) {
-                    bitmap = entry.getKey();
+                for (Map.Entry<Uri, String> entry : map.entrySet()) {
+                    uri = entry.getKey();
                     imageName = entry.getValue();
                 }
-
                 imageName = imageName.replace(".jpg", "");
                 int attachID = Integer.valueOf(imageName);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
 
-                FullScreenImageDialogFragment fragment = FullScreenImageDialogFragment.newInstance(byteArray, attachID);
+                FullScreenImageDialogFragment fragment = FullScreenImageDialogFragment.newInstance(uri, attachID);
                 fragment.show(getParentFragmentManager(), FullScreenImageDialogFragment.TAG);
             }
         });
@@ -316,7 +313,8 @@ public class GalleryFragment extends Fragment {
                         } else {
                             newBitmapList.add(bitmap);
                         }
-                        map.put(bitmap, f.getName());
+                        mapBitmap.put(bitmap, f.getName());
+                        mapUri.put(Uri.fromFile(f), f.getName());
                         break;
                     }
                 }
@@ -369,7 +367,8 @@ public class GalleryFragment extends Fragment {
         } else {
             adapter.updateBitmapList(newBitmapList);
         }
-        adapter.setMap(map);
+        adapter.setMapBitmap(mapBitmap);
+        adapter.setMapUri(mapUri);
         binding.recyclerViewAttachmentFile.setAdapter(adapter);
     }
 
