@@ -17,18 +17,8 @@
         android:roundIcon="@mipmap/ic_sip_mobile_app_launcher"
         android:theme="@style/Theme.SipMobileApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.activity.AnswerContainerActivity"></activity>
         <activity
-            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat" />
-        <activity
-            android:name=".view.activity.GalleryContainerActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".view.activity.PatientContainerActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".view.activity.LoginContainerActivity"
+            android:name=".ui.activity.AttachmentContainerActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +26,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.AnswerContainerActivity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity
+            android:name=".ui.activity.GalleryContainerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.PatientContainerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.LoginContainerActivity"
+            android:screenOrientation="portrait"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

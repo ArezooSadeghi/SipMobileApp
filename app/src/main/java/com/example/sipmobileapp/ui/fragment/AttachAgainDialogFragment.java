@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.view.fragment;
+package com.example.sipmobileapp.ui.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,17 +13,17 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sipmobileapp.R;
-import com.example.sipmobileapp.databinding.FragmentSuccessAttachDialogBinding;
+import com.example.sipmobileapp.databinding.FragmentAttachAgainDialogBinding;
 import com.example.sipmobileapp.viewmodel.AttachmentViewModel;
 
-public class SuccessAttachDialogFragment extends DialogFragment {
-    private FragmentSuccessAttachDialogBinding binding;
+public class AttachAgainDialogFragment extends DialogFragment {
+    private FragmentAttachAgainDialogBinding binding;
     private AttachmentViewModel viewModel;
 
-    public static final String TAG = SuccessAttachDialogFragment.class.getSimpleName();
+    public static final String TAG = AttachAgainDialogFragment.class.getSimpleName();
 
-    public static SuccessAttachDialogFragment newInstance() {
-        SuccessAttachDialogFragment fragment = new SuccessAttachDialogFragment();
+    public static AttachAgainDialogFragment newInstance() {
+        AttachAgainDialogFragment fragment = new AttachAgainDialogFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -41,7 +41,7 @@ public class SuccessAttachDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(LayoutInflater.from(
                 getContext()),
-                R.layout.fragment_success_attach_dialog,
+                R.layout.fragment_attach_again_dialog,
                 null,
                 false);
 
@@ -58,10 +58,18 @@ public class SuccessAttachDialogFragment extends DialogFragment {
     }
 
     private void handleClicked() {
-        binding.imgCloseWindow.setOnClickListener(new View.OnClickListener() {
+        binding.btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewModel.getShowAttachAgainDialog().setValue(true);
+                viewModel.getNoAttachAgain().setValue(true);
+                dismiss();
+            }
+        });
+
+        binding.btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewModel.getYesAttachAgain().setValue(true);
                 dismiss();
             }
         });

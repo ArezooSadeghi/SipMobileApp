@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.view.fragment;
+package com.example.sipmobileapp.ui.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,22 +13,18 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sipmobileapp.R;
-import com.example.sipmobileapp.databinding.FragmentSuccessRemoveAttachDialogBinding;
+import com.example.sipmobileapp.databinding.FragmentDeleteQuestionDialogBinding;
 import com.example.sipmobileapp.viewmodel.AttachmentViewModel;
 
-
-public class SuccessRemoveAttachDialogFragment extends DialogFragment {
-    private FragmentSuccessRemoveAttachDialogBinding binding;
+public class DeleteQuestionDialogFragment extends DialogFragment {
+    private FragmentDeleteQuestionDialogBinding binding;
     private AttachmentViewModel viewModel;
 
-    private static final String ARGS_ATTACH_ID = "attachID";
+    public static final String TAG = DeleteQuestionDialogFragment.class.getSimpleName();
 
-    public static final String TAG = SuccessRemoveAttachDialogFragment.class.getSimpleName();
-
-    public static SuccessRemoveAttachDialogFragment newInstance(int attachID) {
-        SuccessRemoveAttachDialogFragment fragment = new SuccessRemoveAttachDialogFragment();
+    public static DeleteQuestionDialogFragment newInstance() {
+        DeleteQuestionDialogFragment fragment = new DeleteQuestionDialogFragment();
         Bundle args = new Bundle();
-        args.putInt(ARGS_ATTACH_ID, attachID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +41,7 @@ public class SuccessRemoveAttachDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(LayoutInflater.from(
                 getContext()),
-                R.layout.fragment_success_remove_attach_dialog,
+                R.layout.fragment_delete_question_dialog,
                 null,
                 false);
 
@@ -62,11 +58,17 @@ public class SuccessRemoveAttachDialogFragment extends DialogFragment {
     }
 
     private void handleClicked() {
-        binding.imgCloseWindow.setOnClickListener(new View.OnClickListener() {
+        binding.btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int attachID = getArguments().getInt(ARGS_ATTACH_ID);
-                viewModel.getDeleteImageFromGallery().setValue(attachID);
+                dismiss();
+            }
+        });
+
+        binding.btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewModel.getYesDelete().setValue(true);
                 dismiss();
             }
         });

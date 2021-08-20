@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.view.fragment;
+package com.example.sipmobileapp.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -24,10 +24,10 @@ import com.example.sipmobileapp.databinding.FragmentPatientBinding;
 import com.example.sipmobileapp.model.PatientInfo;
 import com.example.sipmobileapp.model.PatientResult;
 import com.example.sipmobileapp.model.ServerData;
+import com.example.sipmobileapp.ui.activity.AnswerContainerActivity;
+import com.example.sipmobileapp.ui.activity.GalleryContainerActivity;
+import com.example.sipmobileapp.ui.activity.LoginContainerActivity;
 import com.example.sipmobileapp.utils.SipMobileAppPreferences;
-import com.example.sipmobileapp.view.activity.AnswerContainerActivity;
-import com.example.sipmobileapp.view.activity.GalleryContainerActivity;
-import com.example.sipmobileapp.view.activity.LoginContainerActivity;
 import com.example.sipmobileapp.viewmodel.PatientViewModel;
 import com.skydoves.powermenu.OnMenuItemClickListener;
 import com.skydoves.powermenu.PowerMenu;
@@ -153,7 +153,7 @@ public class PatientFragment extends Fragment {
         viewModel.getNavigateToGallery().observe(getViewLifecycleOwner(), new Observer<PatientInfo>() {
             @Override
             public void onChanged(PatientInfo patientInfo) {
-                Intent intent = GalleryContainerActivity.newIntent(getContext(), patientInfo.getPatientID());
+                Intent intent = GalleryContainerActivity.newIntent(getContext(), patientInfo.getSickID());
                 startActivity(intent);
             }
         });

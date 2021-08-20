@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.view.fragment;
+package com.example.sipmobileapp.ui.fragment;
 
 import android.os.Build;
 import android.os.Bundle;

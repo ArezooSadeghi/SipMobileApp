@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.view.activity;
+package com.example.sipmobileapp.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.sipmobileapp.utils.SipMobileAppPreferences;
-import com.example.sipmobileapp.view.fragment.LoginFragment;
+import com.example.sipmobileapp.ui.fragment.LoginFragment;
 
 public class LoginContainerActivity extends SingleFragmentActivity {
 

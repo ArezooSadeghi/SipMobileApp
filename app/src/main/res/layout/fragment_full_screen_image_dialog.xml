@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:minHeight="500dp"
-        tools:context=".view.fragment.FullScreenImageDialogFragment">
+        tools:context=".ui.fragment.FullScreenImageDialogFragment">
 
         <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
             android:id="@+id/img_view_full_screen"

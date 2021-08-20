@@ -1,11 +1,11 @@
-package com.example.sipmobileapp.view.activity;
+package com.example.sipmobileapp.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.sipmobileapp.view.fragment.GalleryFragment;
+import com.example.sipmobileapp.ui.fragment.GalleryFragment;
 
 public class GalleryContainerActivity extends SingleFragmentActivity {
 

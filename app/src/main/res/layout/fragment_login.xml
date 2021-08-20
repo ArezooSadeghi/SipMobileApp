@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.LoginFragment">
+        tools:context=".ui.fragment.LoginFragment">
 
         <ImageView
             android:id="@+id/img_sip_logo"

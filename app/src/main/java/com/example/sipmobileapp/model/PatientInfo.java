@@ -2,17 +2,17 @@ package com.example.sipmobileapp.model;
 
 public class PatientInfo {
 
-    private int patientID;
+    private int sickID;
     private String Date;
     private String patientName;
     private String services;
 
-    public int getPatientID() {
-        return patientID;
+    public int getSickID() {
+        return sickID;
     }
 
-    public void setPatientID(int patientID) {
-        this.patientID = patientID;
+    public void setSickID(int sickID) {
+        this.sickID = sickID;
     }
 
     public String getDate() {

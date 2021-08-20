@@ -64,7 +64,7 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientH
                                 powerMenu.dismiss();
                                 break;
                             case 1:
-                                viewModel.getNavigateToAnswer().setValue(patientInfo.getPatientID());
+                                viewModel.getNavigateToAnswer().setValue(patientInfo.getSickID());
                                 powerMenu.dismiss();
                         }
                     }
@@ -89,7 +89,7 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientH
         }
 
         public void bindPatientInfo(PatientInfo patientInfo) {
-            binding.txtPatientID.setText(String.valueOf(patientInfo.getPatientID()));
+            binding.txtPatientID.setText(String.valueOf(patientInfo.getSickID()));
             binding.txtDate.setText(patientInfo.getDate());
             binding.txtPatientName.setText(Converter.convert(patientInfo.getPatientName()));
             binding.txtServices.setText(Converter.convert(patientInfo.getServices()));

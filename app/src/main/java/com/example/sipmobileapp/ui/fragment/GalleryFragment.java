@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.view.fragment;
+package com.example.sipmobileapp.ui.fragment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;

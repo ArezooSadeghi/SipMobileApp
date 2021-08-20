@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.view.fragment;
+package com.example.sipmobileapp.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ import com.example.sipmobileapp.model.ServerData;
 import com.example.sipmobileapp.model.UserParameter;
 import com.example.sipmobileapp.model.UserResult;
 import com.example.sipmobileapp.utils.SipMobileAppPreferences;
-import com.example.sipmobileapp.view.activity.PatientContainerActivity;
+import com.example.sipmobileapp.ui.activity.PatientContainerActivity;
 import com.example.sipmobileapp.viewmodel.LoginViewModel;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
