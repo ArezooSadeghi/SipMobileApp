@@ -116,6 +116,8 @@ public class PatientFragment extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
+                binding.progressBarLoading.setVisibility(View.VISIBLE);
+                binding.txtNoPatient.setVisibility(View.GONE);
                 String centerName = SipMobileAppPreferences.getCenterName(getContext());
                 ServerData serverData = viewModel.getServerData(centerName);
                 viewModel.getSearchService(serverData.getIPAddress() + ":" + serverData.getPort());
@@ -128,6 +130,8 @@ public class PatientFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+                    binding.progressBarLoading.setVisibility(View.VISIBLE);
+                    binding.txtNoPatient.setVisibility(View.GONE);
                     String centerName = SipMobileAppPreferences.getCenterName(getContext());
                     ServerData serverData = viewModel.getServerData(centerName);
                     viewModel.getSearchService(serverData.getIPAddress() + ":" + serverData.getPort());
