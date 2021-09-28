@@ -4,9 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -118,6 +121,21 @@ public class PatientFragment extends Fragment {
                 viewModel.getSearchService(serverData.getIPAddress() + ":" + serverData.getPort());
                 String userLoginKey = SipMobileAppPreferences.getUserLoginKey(getContext());
                 viewModel.search(userLoginKey, binding.edTextSearch.getText().toString());
+            }
+        });
+
+        binding.edTextSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+                    String centerName = SipMobileAppPreferences.getCenterName(getContext());
+                    ServerData serverData = viewModel.getServerData(centerName);
+                    viewModel.getSearchService(serverData.getIPAddress() + ":" + serverData.getPort());
+                    String userLoginKey = SipMobileAppPreferences.getUserLoginKey(getContext());
+                    viewModel.search(userLoginKey, binding.edTextSearch.getText().toString());
+                    return true;
+                }
+                return false;
             }
         });
     }
