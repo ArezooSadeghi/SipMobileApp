@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import com.example.sipmobileapp.R;
 import com.example.sipmobileapp.adapter.BitmapAdapter;
 import com.example.sipmobileapp.databinding.FragmentGalleryBinding;
-import com.example.sipmobileapp.model.AttachInfo;
 import com.example.sipmobileapp.model.AttachResult;
 import com.example.sipmobileapp.model.ServerData;
 import com.example.sipmobileapp.utils.SipMobileAppPreferences;
@@ -47,7 +46,7 @@ public class GalleryFragment extends Fragment {
     private int patientID, index;
     private boolean flag;
     private BitmapAdapter adapter;
-    private List<AttachInfo> attachInfoList = new ArrayList<>();
+    private List<AttachResult.AttachInfo> attachInfoList = new ArrayList<>();
     private List<Bitmap> oldBitmapList = new ArrayList<>();
     private List<Bitmap> newBitmapList = new ArrayList<>();
     private Map<Bitmap, String> mapBitmap = new HashMap<>();
@@ -179,7 +178,7 @@ public class GalleryFragment extends Fragment {
                 if (attachResult.getAttachs() != null & attachResult.getAttachs().length == 0) {
                     binding.progressBarLoading.setVisibility(View.GONE);
                 } else {
-                    for (AttachInfo attachInfo : attachResult.getAttachs()) {
+                    for (AttachResult.AttachInfo attachInfo : attachResult.getAttachs()) {
                         Bitmap bitmap = readFromStorage(attachInfo);
                         if (bitmap != null) {
                             binding.progressBarLoading.setVisibility(View.GONE);
@@ -292,7 +291,7 @@ public class GalleryFragment extends Fragment {
         });
     }
 
-    private Bitmap readFromStorage(AttachInfo attachInfo) {
+    private Bitmap readFromStorage(AttachResult.AttachInfo attachInfo) {
         Bitmap bitmap = null;
         File file = new File(Environment.getExternalStorageDirectory(), "Attachments");
         if (file.exists()) {
@@ -335,7 +334,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private boolean hasAttachInfo(int attachID) {
-        for (AttachInfo attachInfo : attachInfoList) {
+        for (AttachResult.AttachInfo attachInfo : attachInfoList) {
             if (attachInfo.getAttachID() == attachID) {
                 return true;
             }
@@ -343,7 +342,7 @@ public class GalleryFragment extends Fragment {
         return false;
     }
 
-    private AttachInfo writeToStorage(AttachInfo attachInfo) throws IOException {
+    private AttachResult.AttachInfo writeToStorage(AttachResult.AttachInfo attachInfo) throws IOException {
         File fileDir = new File(Environment.getExternalStorageDirectory(), "Attachments");
         if (!fileDir.exists()) {
             fileDir.mkdirs();
@@ -380,11 +379,11 @@ public class GalleryFragment extends Fragment {
         viewModel.attachInfo(userLoginKey, attachID);
     }
 
-    private class GalleryAsyncTask extends AsyncTask<AttachInfo, Void, AttachInfo> {
+    private class GalleryAsyncTask extends AsyncTask<AttachResult.AttachInfo, Void, AttachResult.AttachInfo> {
 
         @Override
-        protected AttachInfo doInBackground(AttachInfo... attachInfoArray) {
-            AttachInfo attachInfo = null;
+        protected AttachResult.AttachInfo doInBackground(AttachResult.AttachInfo... attachInfoArray) {
+            AttachResult.AttachInfo attachInfo = null;
             try {
                 attachInfo = writeToStorage(attachInfoArray[0]);
             } catch (IOException e) {
@@ -394,7 +393,7 @@ public class GalleryFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(AttachInfo attachInfo) {
+        protected void onPostExecute(AttachResult.AttachInfo attachInfo) {
             binding.progressBarLoading.setVisibility(View.GONE);
             binding.recyclerViewAttachmentFile.setVisibility(View.VISIBLE);
             Bitmap bitmap = readFromStorage(attachInfo);
