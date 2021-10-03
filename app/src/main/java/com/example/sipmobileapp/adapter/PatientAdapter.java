@@ -51,8 +51,7 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientH
             public void onClick(View view) {
                 PowerMenu powerMenu = new PowerMenu.Builder(context)
                         .addItem(new PowerMenuItem("مشاهده مستندات", R.drawable.magnifier))
-                        .addItem(new PowerMenuItem("جوابدهی"))
-                        .setSize(330, 400)
+                        .setSize(600, 200)
                         .build();
 
                 powerMenu.setOnMenuItemClickListener(new OnMenuItemClickListener<PowerMenuItem>() {
