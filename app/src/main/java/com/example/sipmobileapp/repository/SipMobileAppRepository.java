@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.sipmobileapp.R;
 import com.example.sipmobileapp.database.SipMobileAppDBHelper;
 import com.example.sipmobileapp.database.SipMobileAppSchema;
 import com.example.sipmobileapp.model.AttachParameter;
@@ -22,7 +23,6 @@ import com.example.sipmobileapp.retrofit.SipMobileAppService;
 import com.example.sipmobileapp.retrofit.UserResultDeserializer;
 import com.example.sipmobileapp.viewmodel.SingleLiveEvent;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -38,31 +38,19 @@ public class SipMobileAppRepository {
     public static SipMobileAppRepository sInstance;
     private Context context;
     private SQLiteDatabase mDatabase;
-    private SipMobileAppService userLoginService, searchService, patientAttachmentListService, attachInfoService, addAttachService, deleteAttachService;
+    private SipMobileAppService sipMobileAppService;
 
     public static final String TAG = SipMobileAppRepository.class.getSimpleName();
 
-    private SingleLiveEvent<String> noConnectivitySingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<Boolean> timeOutExceptionHappenSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<String> wrongAddressSingleLiveEvent = new SingleLiveEvent<>();
-
-    private SingleLiveEvent<UserResult> userLoginSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<String> errorUserLoginSingleLiveEvent = new SingleLiveEvent<>();
-
-    private SingleLiveEvent<PatientResult> searchSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<String> errorSearchSingleLiveEvent = new SingleLiveEvent<>();
-
-    private SingleLiveEvent<AttachResult> patientAttachmentListResultSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<String> errorPatientAttachmentListResultSingleLiveEvent = new SingleLiveEvent<>();
-
-    private SingleLiveEvent<AttachResult> attachInfoSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<String> errorAttachInfoSingleLiveEvent = new SingleLiveEvent<>();
-
-    private SingleLiveEvent<AttachResult> addAttachSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<String> errorAddAttachSingleLiveEvent = new SingleLiveEvent<>();
-
-    private SingleLiveEvent<AttachResult> deleteAttachSingleLiveEvent = new SingleLiveEvent<>();
-    private SingleLiveEvent<String> errorDeleteAttachSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<UserResult> loginResultSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<PatientResult> patientsResultSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<AttachResult> patientAttachmentsResultSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<AttachResult> attachInfoResultSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<AttachResult> attachResultSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<AttachResult> deleteAttachResultSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<String> noConnectionExceptionHappenSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<String> timeoutExceptionHappenSingleLiveEvent = new SingleLiveEvent<>();
+    private SingleLiveEvent<String> wrongIpAddressSingleLiveEvent = new SingleLiveEvent<>();
 
     private SipMobileAppRepository(Context context) {
         this.context = context;
@@ -77,100 +65,58 @@ public class SipMobileAppRepository {
         return sInstance;
     }
 
-    public void getUserLoginService(String newBaseUrl) {
+    public void getServiceUserResult(String newBaseUrl) {
         RetrofitInstance.getNewBaseUrl(newBaseUrl);
-        userLoginService = RetrofitInstance.userLoginRetrofitInstance(new TypeToken<UserResult>() {
+        sipMobileAppService = RetrofitInstance.getRI(new TypeToken<UserResult>() {
         }.getType(), new UserResultDeserializer(), context).create(SipMobileAppService.class);
     }
 
-    public void getSearchService(String newBaseUrl) {
+    public void getServicePatientResult(String newBaseUrl) {
         RetrofitInstance.getNewBaseUrl(newBaseUrl);
-        searchService = RetrofitInstance.searchRetrofitInstance(new TypeToken<PatientResult>() {
+        sipMobileAppService = RetrofitInstance.getRI(new TypeToken<PatientResult>() {
         }.getType(), new PatientResultDeserializer(), context).create(SipMobileAppService.class);
     }
 
-    public void getPatientAttachmentListService(String newBaseUrl) {
+    public void getServiceAttachResult(String newBaseUrl) {
         RetrofitInstance.getNewBaseUrl(newBaseUrl);
-        patientAttachmentListService = RetrofitInstance.patientAttachmentListRetrofitInstance(new TypeToken<AttachResult>() {
+        sipMobileAppService = RetrofitInstance.getRI(new TypeToken<AttachResult>() {
         }.getType(), new AttachResultDeserializer(), context).create(SipMobileAppService.class);
     }
 
-    public void getAttachInfoService(String newBaseUrl) {
-        RetrofitInstance.getNewBaseUrl(newBaseUrl);
-        attachInfoService = RetrofitInstance.attachInfoRetrofitInstance(new TypeToken<AttachResult>() {
-        }.getType(), new AttachResultDeserializer(), context).create(SipMobileAppService.class);
+    public SingleLiveEvent<UserResult> getLoginResultSingleLiveEvent() {
+        return loginResultSingleLiveEvent;
     }
 
-    public void getAddAttachService(String newBaseUrl) {
-        RetrofitInstance.getNewBaseUrl(newBaseUrl);
-        addAttachService = RetrofitInstance.addAttachRetrofitInstance(new TypeToken<AttachResult>() {
-        }.getType(), new AttachResultDeserializer(), context).create(SipMobileAppService.class);
+    public SingleLiveEvent<PatientResult> getPatientsResultSingleLiveEvent() {
+        return patientsResultSingleLiveEvent;
     }
 
-    public void getDeleteAttachService(String newBaseUrl) {
-        RetrofitInstance.getNewBaseUrl(newBaseUrl);
-        deleteAttachService = RetrofitInstance.deleteAttachRetrofitInstance(new TypeToken<AttachResult>() {
-        }.getType(), new AttachResultDeserializer(), context).create(SipMobileAppService.class);
+    public SingleLiveEvent<AttachResult> getPatientAttachmentsResultSingleLiveEvent() {
+        return patientAttachmentsResultSingleLiveEvent;
     }
 
-    public SingleLiveEvent<UserResult> getUserLoginSingleLiveEvent() {
-        return userLoginSingleLiveEvent;
+    public SingleLiveEvent<AttachResult> getAttachInfoResultSingleLiveEvent() {
+        return attachInfoResultSingleLiveEvent;
     }
 
-    public SingleLiveEvent<String> getErrorUserLoginSingleLiveEvent() {
-        return errorUserLoginSingleLiveEvent;
+    public SingleLiveEvent<AttachResult> getAttachResultSingleLiveEvent() {
+        return attachResultSingleLiveEvent;
     }
 
-    public SingleLiveEvent<String> getNoConnectivitySingleLiveEvent() {
-        return noConnectivitySingleLiveEvent;
+    public SingleLiveEvent<AttachResult> getDeleteAttachResultSingleLiveEvent() {
+        return deleteAttachResultSingleLiveEvent;
     }
 
-    public SingleLiveEvent<Boolean> getTimeOutExceptionHappenSingleLiveEvent() {
-        return timeOutExceptionHappenSingleLiveEvent;
+    public SingleLiveEvent<String> getNoConnectionExceptionHappenSingleLiveEvent() {
+        return noConnectionExceptionHappenSingleLiveEvent;
     }
 
-    public SingleLiveEvent<String> getWrongAddressSingleLiveEvent() {
-        return wrongAddressSingleLiveEvent;
+    public SingleLiveEvent<String> getTimeoutExceptionHappenSingleLiveEvent() {
+        return timeoutExceptionHappenSingleLiveEvent;
     }
 
-    public SingleLiveEvent<PatientResult> getSearchSingleLiveEvent() {
-        return searchSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getErrorSearchSingleLiveEvent() {
-        return errorSearchSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<AttachResult> getPatientAttachmentListResultSingleLiveEvent() {
-        return patientAttachmentListResultSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getErrorPatientAttachmentListResultSingleLiveEvent() {
-        return errorPatientAttachmentListResultSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<AttachResult> getAttachInfoSingleLiveEvent() {
-        return attachInfoSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getErrorAttachInfoSingleLiveEvent() {
-        return errorAttachInfoSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<AttachResult> getAddAttachSingleLiveEvent() {
-        return addAttachSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getErrorAddAttachSingleLiveEvent() {
-        return errorAddAttachSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<AttachResult> getDeleteAttachSingleLiveEvent() {
-        return deleteAttachSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getErrorDeleteAttachSingleLiveEvent() {
-        return errorDeleteAttachSingleLiveEvent;
+    public SingleLiveEvent<String> getWrongIpAddressSingleLiveEvent() {
+        return wrongIpAddressSingleLiveEvent;
     }
 
     public void insertServerData(ServerData serverData) {
@@ -266,18 +212,17 @@ public class SipMobileAppRepository {
         mDatabase.delete(SipMobileAppSchema.ServerDataTable.NAME, whereClause, whereArgs);
     }
 
-    public void userLogin(UserParameter userParameter) {
-        userLoginService.userLogin(userParameter).enqueue(new Callback<UserResult>() {
+    public void login(String path, UserParameter userParameter) {
+        sipMobileAppService.login(path, userParameter).enqueue(new Callback<UserResult>() {
             @Override
             public void onResponse(Call<UserResult> call, Response<UserResult> response) {
                 if (response.isSuccessful()) {
-                    userLoginSingleLiveEvent.setValue(response.body());
+                    loginResultSingleLiveEvent.setValue(response.body());
                 } else {
-                    Gson gson = new GsonBuilder().create();
-                    UserResult userResult = new UserResult();
                     try {
-                        userResult = gson.fromJson(response.errorBody().string(), UserResult.class);
-                        errorUserLoginSingleLiveEvent.setValue(userResult.getError());
+                        Gson gson = new Gson();
+                        UserResult userResult = gson.fromJson(response.errorBody().string(), UserResult.class);
+                        loginResultSingleLiveEvent.setValue(userResult);
                     } catch (IOException e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -287,28 +232,27 @@ public class SipMobileAppRepository {
             @Override
             public void onFailure(Call<UserResult> call, Throwable t) {
                 if (t instanceof NoConnectivityException) {
-                    noConnectivitySingleLiveEvent.setValue(t.getMessage());
+                    noConnectionExceptionHappenSingleLiveEvent.setValue(t.getMessage());
                 } else if (t instanceof SocketTimeoutException) {
-                    timeOutExceptionHappenSingleLiveEvent.setValue(true);
+                    timeoutExceptionHappenSingleLiveEvent.setValue(context.getResources().getString(R.string.timeout_exception_happen_message));
                 } else {
-                    wrongAddressSingleLiveEvent.setValue("سرور موجود نمی باشد");
+                    wrongIpAddressSingleLiveEvent.setValue(context.getResources().getString(R.string.no_exist_server_message));
                 }
             }
         });
     }
 
-    public void search(String userLoginKey, String patientName) {
-        searchService.search(userLoginKey, patientName).enqueue(new Callback<PatientResult>() {
+    public void fetchPatients(String path, String userLoginKey, String patientName) {
+        sipMobileAppService.fetchPatients(path, userLoginKey, patientName).enqueue(new Callback<PatientResult>() {
             @Override
             public void onResponse(Call<PatientResult> call, Response<PatientResult> response) {
                 if (response.isSuccessful()) {
-                    searchSingleLiveEvent.setValue(response.body());
+                    patientsResultSingleLiveEvent.setValue(response.body());
                 } else {
-                    Gson gson = new GsonBuilder().create();
-                    PatientResult patientResult = new PatientResult();
                     try {
-                        patientResult = gson.fromJson(response.errorBody().string(), PatientResult.class);
-                        errorSearchSingleLiveEvent.setValue(patientResult.getError());
+                        Gson gson = new Gson();
+                        PatientResult patientResult = gson.fromJson(response.errorBody().string(), PatientResult.class);
+                        patientsResultSingleLiveEvent.setValue(patientResult);
                     } catch (IOException e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -318,26 +262,27 @@ public class SipMobileAppRepository {
             @Override
             public void onFailure(Call<PatientResult> call, Throwable t) {
                 if (t instanceof NoConnectivityException) {
-                    noConnectivitySingleLiveEvent.setValue(t.getMessage());
+                    noConnectionExceptionHappenSingleLiveEvent.setValue(t.getMessage());
                 } else if (t instanceof SocketTimeoutException) {
-                    timeOutExceptionHappenSingleLiveEvent.setValue(true);
+                    timeoutExceptionHappenSingleLiveEvent.setValue(context.getResources().getString(R.string.timeout_exception_happen_message));
+                } else {
+                    Log.e(TAG, t.getMessage());
                 }
             }
         });
     }
 
-    public void patientAttachmentList(String userLoginKey, int sickID) {
-        patientAttachmentListService.patientAttachmentList(userLoginKey, sickID).enqueue(new Callback<AttachResult>() {
+    public void fetchPatientAttachments(String path, String userLoginKey, int sickID) {
+        sipMobileAppService.fetchPatientAttachments(path, userLoginKey, sickID).enqueue(new Callback<AttachResult>() {
             @Override
             public void onResponse(Call<AttachResult> call, Response<AttachResult> response) {
                 if (response.isSuccessful()) {
-                    patientAttachmentListResultSingleLiveEvent.setValue(response.body());
+                    patientAttachmentsResultSingleLiveEvent.setValue(response.body());
                 } else {
-                    Gson gson = new GsonBuilder().create();
-                    AttachResult attachResult = new AttachResult();
                     try {
-                        attachResult = gson.fromJson(response.errorBody().string(), AttachResult.class);
-                        errorPatientAttachmentListResultSingleLiveEvent.setValue(attachResult.getError());
+                        Gson gson = new Gson();
+                        AttachResult attachResult = gson.fromJson(response.errorBody().string(), AttachResult.class);
+                        patientAttachmentsResultSingleLiveEvent.setValue(attachResult);
                     } catch (IOException e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -347,26 +292,27 @@ public class SipMobileAppRepository {
             @Override
             public void onFailure(Call<AttachResult> call, Throwable t) {
                 if (t instanceof NoConnectivityException) {
-                    noConnectivitySingleLiveEvent.setValue(t.getMessage());
+                    noConnectionExceptionHappenSingleLiveEvent.setValue(t.getMessage());
                 } else if (t instanceof SocketTimeoutException) {
-                    timeOutExceptionHappenSingleLiveEvent.setValue(true);
+                    timeoutExceptionHappenSingleLiveEvent.setValue(context.getResources().getString(R.string.timeout_exception_happen_message));
+                } else {
+                    Log.e(TAG, t.getMessage());
                 }
             }
         });
     }
 
-    public void attachInfo(String userLoginKey, int attachID) {
-        attachInfoService.attachInfo(userLoginKey, attachID).enqueue(new Callback<AttachResult>() {
+    public void fetchAttachInfo(String path, String userLoginKey, int attachID) {
+        sipMobileAppService.fetchAttachInfo(path, userLoginKey, attachID).enqueue(new Callback<AttachResult>() {
             @Override
             public void onResponse(Call<AttachResult> call, Response<AttachResult> response) {
                 if (response.isSuccessful()) {
-                    attachInfoSingleLiveEvent.setValue(response.body());
+                    attachInfoResultSingleLiveEvent.setValue(response.body());
                 } else {
-                    Gson gson = new GsonBuilder().create();
-                    AttachResult attachResult = new AttachResult();
                     try {
-                        attachResult = gson.fromJson(response.errorBody().string(), AttachResult.class);
-                        errorAttachInfoSingleLiveEvent.setValue(attachResult.getError());
+                        Gson gson = new Gson();
+                        AttachResult attachResult = gson.fromJson(response.errorBody().string(), AttachResult.class);
+                        attachInfoResultSingleLiveEvent.setValue(attachResult);
                     } catch (IOException e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -376,26 +322,27 @@ public class SipMobileAppRepository {
             @Override
             public void onFailure(Call<AttachResult> call, Throwable t) {
                 if (t instanceof NoConnectivityException) {
-                    noConnectivitySingleLiveEvent.setValue(t.getMessage());
+                    noConnectionExceptionHappenSingleLiveEvent.setValue(t.getMessage());
                 } else if (t instanceof SocketTimeoutException) {
-                    timeOutExceptionHappenSingleLiveEvent.setValue(true);
+                    timeoutExceptionHappenSingleLiveEvent.setValue(context.getResources().getString(R.string.timeout_exception_happen_message));
+                } else {
+                    Log.e(TAG, t.getMessage());
                 }
             }
         });
     }
 
-    public void addAttach(String userLoginKey, AttachParameter attachParameter) {
-        addAttachService.addAttach(userLoginKey, attachParameter).enqueue(new Callback<AttachResult>() {
+    public void attach(String path, String userLoginKey, AttachParameter attachParameter) {
+        sipMobileAppService.attach(path, userLoginKey, attachParameter).enqueue(new Callback<AttachResult>() {
             @Override
             public void onResponse(Call<AttachResult> call, Response<AttachResult> response) {
                 if (response.isSuccessful()) {
-                    addAttachSingleLiveEvent.setValue(response.body());
+                    attachResultSingleLiveEvent.setValue(response.body());
                 } else {
-                    Gson gson = new GsonBuilder().create();
-                    AttachResult attachResult = new AttachResult();
                     try {
-                        attachResult = gson.fromJson(response.errorBody().string(), AttachResult.class);
-                        errorAddAttachSingleLiveEvent.setValue(attachResult.getError());
+                        Gson gson = new Gson();
+                        AttachResult attachResult = gson.fromJson(response.errorBody().string(), AttachResult.class);
+                        attachResultSingleLiveEvent.setValue(attachResult);
                     } catch (IOException e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -405,26 +352,27 @@ public class SipMobileAppRepository {
             @Override
             public void onFailure(Call<AttachResult> call, Throwable t) {
                 if (t instanceof NoConnectivityException) {
-                    noConnectivitySingleLiveEvent.setValue(t.getMessage());
+                    noConnectionExceptionHappenSingleLiveEvent.setValue(t.getMessage());
                 } else if (t instanceof SocketTimeoutException) {
-                    timeOutExceptionHappenSingleLiveEvent.setValue(true);
+                    timeoutExceptionHappenSingleLiveEvent.setValue(context.getResources().getString(R.string.timeout_exception_happen_message));
+                } else {
+                    Log.e(TAG, t.getMessage());
                 }
             }
         });
     }
 
-    public void deleteAttach(String userLoginKey, int attachID) {
-        deleteAttachService.deleteAttach(userLoginKey, attachID).enqueue(new Callback<AttachResult>() {
+    public void deleteAttach(String path, String userLoginKey, int attachID) {
+        sipMobileAppService.deleteAttach(path, userLoginKey, attachID).enqueue(new Callback<AttachResult>() {
             @Override
             public void onResponse(Call<AttachResult> call, Response<AttachResult> response) {
                 if (response.isSuccessful()) {
-                    deleteAttachSingleLiveEvent.setValue(response.body());
+                    deleteAttachResultSingleLiveEvent.setValue(response.body());
                 } else {
-                    Gson gson = new GsonBuilder().create();
-                    AttachResult attachResult = new AttachResult();
                     try {
-                        attachResult = gson.fromJson(response.errorBody().string(), AttachResult.class);
-                        errorDeleteAttachSingleLiveEvent.setValue(attachResult.getError());
+                        Gson gson = new Gson();
+                        AttachResult attachResult = gson.fromJson(response.errorBody().string(), AttachResult.class);
+                        deleteAttachResultSingleLiveEvent.setValue(attachResult);
                     } catch (IOException e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -434,9 +382,11 @@ public class SipMobileAppRepository {
             @Override
             public void onFailure(Call<AttachResult> call, Throwable t) {
                 if (t instanceof NoConnectivityException) {
-                    noConnectivitySingleLiveEvent.setValue(t.getMessage());
+                    noConnectionExceptionHappenSingleLiveEvent.setValue(t.getMessage());
                 } else if (t instanceof SocketTimeoutException) {
-                    timeOutExceptionHappenSingleLiveEvent.setValue(true);
+                    timeoutExceptionHappenSingleLiveEvent.setValue(context.getResources().getString(R.string.timeout_exception_happen_message));
+                } else {
+                    Log.e(TAG, t.getMessage());
                 }
             }
         });

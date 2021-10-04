@@ -90,8 +90,8 @@ public class PatientAdapter extends RecyclerView.Adapter<PatientAdapter.PatientH
         public void bindPatientInfo(PatientInfo patientInfo) {
             binding.txtPatientID.setText(String.valueOf(patientInfo.getSickID()));
             binding.txtDate.setText(patientInfo.getDate());
-            binding.txtPatientName.setText(Converter.convert(patientInfo.getPatientName()));
-            binding.txtServices.setText(Converter.convert(patientInfo.getServices()));
+            binding.txtPatientName.setText(Converter.letterConverter(patientInfo.getPatientName()));
+            binding.txtServices.setText(Converter.letterConverter(patientInfo.getServices()));
         }
     }
 }

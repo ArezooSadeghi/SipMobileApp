@@ -1,7 +1,8 @@
-package com.example.sipmobileapp.ui.fragment;
+package com.example.sipmobileapp.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,18 +14,21 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sipmobileapp.R;
-import com.example.sipmobileapp.databinding.FragmentSuccessAttachDialogBinding;
+import com.example.sipmobileapp.databinding.FragmentSuccessDialogBinding;
+import com.example.sipmobileapp.utils.Converter;
 import com.example.sipmobileapp.viewmodel.AttachmentViewModel;
 
 public class SuccessAttachDialogFragment extends DialogFragment {
-    private FragmentSuccessAttachDialogBinding binding;
+    private FragmentSuccessDialogBinding binding;
     private AttachmentViewModel viewModel;
 
+    private static final String ARGS_MESSAGE = "message";
     public static final String TAG = SuccessAttachDialogFragment.class.getSimpleName();
 
-    public static SuccessAttachDialogFragment newInstance() {
+    public static SuccessAttachDialogFragment newInstance(String message) {
         SuccessAttachDialogFragment fragment = new SuccessAttachDialogFragment();
         Bundle args = new Bundle();
+        args.putString(ARGS_MESSAGE, message);
         fragment.setArguments(args);
         return fragment;
     }
@@ -32,8 +36,7 @@ public class SuccessAttachDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        viewModel = new ViewModelProvider(requireActivity()).get(AttachmentViewModel.class);
+        createViewModel();
     }
 
     @NonNull
@@ -41,15 +44,20 @@ public class SuccessAttachDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(LayoutInflater.from(
                 getContext()),
-                R.layout.fragment_success_attach_dialog,
+                R.layout.fragment_success_dialog,
                 null,
                 false);
 
-        handleClicked();
+        initViews();
+        handleEvents();
 
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setView(binding.getRoot())
                 .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
 
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
@@ -57,8 +65,17 @@ public class SuccessAttachDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    private void handleClicked() {
-        binding.imgCloseWindow.setOnClickListener(new View.OnClickListener() {
+    private void createViewModel() {
+        viewModel = new ViewModelProvider(requireActivity()).get(AttachmentViewModel.class);
+    }
+
+    private void initViews() {
+        String message = Converter.letterConverter(getArguments().getString(ARGS_MESSAGE));
+        binding.txtSuccessMessage.setText(message);
+    }
+
+    private void handleEvents() {
+        binding.btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 viewModel.getShowAttachAgainDialog().setValue(true);

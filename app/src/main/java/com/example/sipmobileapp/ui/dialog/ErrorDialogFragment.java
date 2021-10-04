@@ -1,7 +1,8 @@
-package com.example.sipmobileapp.ui.fragment;
+package com.example.sipmobileapp.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,12 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.sipmobileapp.R;
 import com.example.sipmobileapp.databinding.FragmentErrorDialogBinding;
+import com.example.sipmobileapp.utils.Converter;
 
 public class ErrorDialogFragment extends DialogFragment {
     private FragmentErrorDialogBinding mBinding;
 
     private static final String ARGS_MESSAGE = "message";
-
     public static final String TAG = ErrorDialogFragment.class.getSimpleName();
 
     public static ErrorDialogFragment newInstance(String message) {
@@ -44,11 +45,15 @@ public class ErrorDialogFragment extends DialogFragment {
                 false);
 
         initViews();
-        handleClicked();
+        handleEvents();
 
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setView(mBinding.getRoot())
                 .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
 
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
@@ -57,18 +62,11 @@ public class ErrorDialogFragment extends DialogFragment {
     }
 
     private void initViews() {
-        String message = getArguments().getString(ARGS_MESSAGE);
-        mBinding.txtMessage.setText(message);
+        String message = Converter.letterConverter(getArguments().getString(ARGS_MESSAGE));
+        mBinding.txtErrorMessage.setText(message);
     }
 
-    private void handleClicked() {
-        mBinding.imgCloseWindow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
-
+    private void handleEvents() {
         mBinding.btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

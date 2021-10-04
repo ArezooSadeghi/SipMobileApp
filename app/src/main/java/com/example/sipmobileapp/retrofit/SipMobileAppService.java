@@ -12,25 +12,26 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface SipMobileAppService {
 
-    @POST(".")
-    Call<UserResult> userLogin(@Body UserParameter userParameter);
+    @POST("{path}")
+    Call<UserResult> login(@Path("path") String path, @Body UserParameter userParameter);
 
-    @GET(".")
-    Call<PatientResult> search(@Header("userLoginKey") String userLoginKey, @Query("patientName") String patientName);
+    @GET("{path}")
+    Call<PatientResult> fetchPatients(@Path("path") String path, @Header("userLoginKey") String userLoginKey, @Query("patientName") String patientName);
 
-    @GET(".")
-    Call<AttachResult> patientAttachmentList(@Header("userLoginKey") String userLoginKey, @Query("sickID") int sickID);
+    @GET("{path}")
+    Call<AttachResult> fetchPatientAttachments(@Path("path") String path, @Header("userLoginKey") String userLoginKey, @Query("sickID") int sickID);
 
-    @GET(".")
-    Call<AttachResult> attachInfo(@Header("userLoginKey") String userLoginKey, @Query("attachID") int attachID);
+    @GET("{path}")
+    Call<AttachResult> fetchAttachInfo(@Path("path") String path, @Header("userLoginKey") String userLoginKey, @Query("attachID") int attachID);
 
-    @POST(".")
-    Call<AttachResult> addAttach(@Header("userLoginKey") String userLoginKey, @Body AttachParameter attachParameter);
+    @POST("{path}")
+    Call<AttachResult> attach(@Path("path") String path, @Header("userLoginKey") String userLoginKey, @Body AttachParameter attachParameter);
 
-    @DELETE(".")
-    Call<AttachResult> deleteAttach(@Header("userLoginKey") String userLoginKey, @Query("attachID") int attachID);
+    @DELETE("{path}")
+    Call<AttachResult> deleteAttach(@Path("path") String path, @Header("userLoginKey") String userLoginKey, @Query("attachID") int attachID);
 }

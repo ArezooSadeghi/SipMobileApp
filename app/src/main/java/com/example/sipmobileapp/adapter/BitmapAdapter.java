@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.sipmobileapp.R;
-import com.example.sipmobileapp.databinding.BitmapAdapterItemBinding;
+import com.example.sipmobileapp.databinding.PhotoGalleryAdapterItemBinding;
 import com.example.sipmobileapp.viewmodel.AttachmentViewModel;
 
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class BitmapAdapter extends RecyclerView.Adapter<BitmapAdapter.BitmapHold
     public BitmapHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new BitmapHolder(DataBindingUtil.inflate(
                 LayoutInflater.from(context),
-                R.layout.bitmap_adapter_item,
+                R.layout.photo_gallery_adapter_item,
                 parent,
                 false));
     }
@@ -86,16 +86,16 @@ public class BitmapAdapter extends RecyclerView.Adapter<BitmapAdapter.BitmapHold
     }
 
     public class BitmapHolder extends RecyclerView.ViewHolder {
-        private BitmapAdapterItemBinding binding;
+        private PhotoGalleryAdapterItemBinding binding;
 
-        public BitmapHolder(BitmapAdapterItemBinding binding) {
+        public BitmapHolder(PhotoGalleryAdapterItemBinding binding) {
             super(binding.getRoot());
 
             this.binding = binding;
         }
 
         public void bindBitmap(Bitmap bitmap) {
-            Glide.with(context).load(bitmap).into(binding.imgView);
+            Glide.with(context).load(bitmap).into(binding.ivPhoto);
         }
     }
 }

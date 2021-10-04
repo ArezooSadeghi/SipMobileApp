@@ -23,24 +23,22 @@ public class LoginViewModel extends AndroidViewModel {
     private SingleLiveEvent<ServerData> deleteClicked = new SingleLiveEvent<>();
     private SingleLiveEvent<Boolean> deleteNotifySpinner = new SingleLiveEvent<>();
 
-    private SingleLiveEvent<String> noConnectivitySingleLiveEvent;
-    private SingleLiveEvent<Boolean> timeOutExceptionHappenSingleLiveEvent;
-    private SingleLiveEvent<String> wrongAddressSingleLiveEvent;
+    private SingleLiveEvent<String> noConnectionExceptionHappenSingleLiveEvent;
+    private SingleLiveEvent<String> timeoutExceptionHappenSingleLiveEvent;
+    private SingleLiveEvent<String> wrongIpAddressSingleLiveEvent;
 
-    private SingleLiveEvent<UserResult> userLoginSingleLiveEvent;
-    private SingleLiveEvent<String> errorUserLoginSingleLiveEvent;
+    private SingleLiveEvent<UserResult> loginResultSingleLiveEvent;
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
 
         mRepository = SipMobileAppRepository.getInstance(getApplication());
 
-        noConnectivitySingleLiveEvent = mRepository.getNoConnectivitySingleLiveEvent();
-        timeOutExceptionHappenSingleLiveEvent = mRepository.getTimeOutExceptionHappenSingleLiveEvent();
-        wrongAddressSingleLiveEvent = mRepository.getWrongAddressSingleLiveEvent();
+        noConnectionExceptionHappenSingleLiveEvent = mRepository.getNoConnectionExceptionHappenSingleLiveEvent();
+        timeoutExceptionHappenSingleLiveEvent = mRepository.getTimeoutExceptionHappenSingleLiveEvent();
+        wrongIpAddressSingleLiveEvent = mRepository.getWrongIpAddressSingleLiveEvent();
 
-        userLoginSingleLiveEvent = mRepository.getUserLoginSingleLiveEvent();
-        errorUserLoginSingleLiveEvent = mRepository.getErrorUserLoginSingleLiveEvent();
+        loginResultSingleLiveEvent = mRepository.getLoginResultSingleLiveEvent();
     }
 
     public SingleLiveEvent<Boolean> getInsertNotifySpinner() {
@@ -63,24 +61,20 @@ public class LoginViewModel extends AndroidViewModel {
         return deleteNotifySpinner;
     }
 
-    public SingleLiveEvent<String> getNoConnectivitySingleLiveEvent() {
-        return noConnectivitySingleLiveEvent;
+    public SingleLiveEvent<String> getNoConnectionExceptionHappenSingleLiveEvent() {
+        return noConnectionExceptionHappenSingleLiveEvent;
     }
 
-    public SingleLiveEvent<Boolean> getTimeOutExceptionHappenSingleLiveEvent() {
-        return timeOutExceptionHappenSingleLiveEvent;
+    public SingleLiveEvent<String> getTimeoutExceptionHappenSingleLiveEvent() {
+        return timeoutExceptionHappenSingleLiveEvent;
     }
 
-    public SingleLiveEvent<UserResult> getUserLoginSingleLiveEvent() {
-        return userLoginSingleLiveEvent;
+    public SingleLiveEvent<String> getWrongIpAddressSingleLiveEvent() {
+        return wrongIpAddressSingleLiveEvent;
     }
 
-    public SingleLiveEvent<String> getErrorUserLoginSingleLiveEvent() {
-        return errorUserLoginSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getWrongAddressSingleLiveEvent() {
-        return wrongAddressSingleLiveEvent;
+    public SingleLiveEvent<UserResult> getLoginResultSingleLiveEvent() {
+        return loginResultSingleLiveEvent;
     }
 
     public List<ServerData> getServerDataList() {
@@ -99,11 +93,11 @@ public class LoginViewModel extends AndroidViewModel {
         mRepository.deleteServerData(serverData);
     }
 
-    public void userLogin(UserParameter userParameter) {
-        mRepository.userLogin(userParameter);
+    public void login(String path, UserParameter userParameter) {
+        mRepository.login(path, userParameter);
     }
 
     public void getUserLoginService(String newBaseUrl) {
-        mRepository.getUserLoginService(newBaseUrl);
+        mRepository.getServiceUserResult(newBaseUrl);
     }
 }

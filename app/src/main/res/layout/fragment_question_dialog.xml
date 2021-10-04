@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:layoutDirection="ltr"
         android:padding="20dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,9 +25,8 @@
                 android:id="@+id/txt_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/title_error_bg"
+                android:background="@drawable/title_question_bg"
                 android:padding="10dp"
-                android:text="خطا"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -38,14 +38,13 @@
                 android:layout_height="25dp"
                 android:layout_marginLeft="10dp"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_info"
                 app:layout_constraintBottom_toBottomOf="@id/txt_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/txt_title"
                 app:tint="@color/white" />
 
             <TextView
-                android:id="@+id/txt_error_message"
+                android:id="@+id/txt_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -60,17 +59,33 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/btn_close"
-            android:layout_width="match_parent"
+            android:id="@+id/btn_yes"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginLeft="80dp"
+            android:layout_marginLeft="64dp"
             android:layout_marginRight="80dp"
-            android:background="@drawable/error_button_bg"
-            android:text="بستن"
+            android:background="@drawable/question_button_bg"
+            android:text="بله"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:backgroundTint="#CC0000"
+            app:backgroundTint="@color/orange"
             app:layout_constraintBottom_toBottomOf="@id/layoutDialog"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_no"
+            app:layout_constraintTop_toBottomOf="@id/layoutDialog" />
+
+        <Button
+            android:id="@+id/btn_no"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="80dp"
+            android:background="@drawable/question_button_bg"
+            android:text="خیر"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:backgroundTint="@color/orange"
+            app:layout_constraintBottom_toBottomOf="@id/layoutDialog"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layoutDialog" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

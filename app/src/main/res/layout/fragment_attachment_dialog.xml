@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:minHeight="500dp"
-        tools:context=".ui.fragment.AttachmentDialogFragment">
+        tools:context=".ui.dialog.AttachmentDialogFragment">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view"
@@ -23,7 +23,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/img_view_attachment"
+                android:id="@+id/iv_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/attachment_image_view_background" />
@@ -31,7 +31,7 @@
         </androidx.cardview.widget.CardView>
 
         <ImageView
-            android:id="@+id/img_view_attach_from_gallery"
+            android:id="@+id/iv_choose_from_gallery"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginBottom="64dp"
@@ -40,7 +40,7 @@
             app:layout_constraintStart_toStartOf="@id/card_view" />
 
         <ImageView
-            android:id="@+id/img_view_camera"
+            android:id="@+id/iv_camera"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginBottom="64dp"
@@ -49,17 +49,17 @@
             app:layout_constraintEnd_toEndOf="@id/card_view" />
 
         <ImageView
-            android:id="@+id/img_view_screen_rotation"
+            android:id="@+id/iv_rotate"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginBottom="64dp"
             android:src="@drawable/ic_screen_rotation"
             app:layout_constraintBottom_toTopOf="@id/card_view"
-            app:layout_constraintEnd_toStartOf="@id/img_view_camera"
-            app:layout_constraintStart_toEndOf="@id/img_view_attach_from_gallery" />
+            app:layout_constraintEnd_toStartOf="@id/iv_camera"
+            app:layout_constraintStart_toEndOf="@id/iv_choose_from_gallery" />
 
         <ImageView
-            android:id="@+id/img_view_send"
+            android:id="@+id/iv_send"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="16dp"
@@ -78,13 +78,13 @@
             android:fontFamily="@font/regular"
             android:hint="@string/description"
             android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="@id/img_view_send"
-            app:layout_constraintEnd_toStartOf="@id/img_view_send"
+            app:layout_constraintBottom_toBottomOf="@id/iv_send"
+            app:layout_constraintEnd_toStartOf="@id/iv_send"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/img_view_send" />
+            app:layout_constraintTop_toTopOf="@id/iv_send" />
 
         <ImageView
-            android:id="@+id/img_view_close"
+            android:id="@+id/iv_close"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_close"

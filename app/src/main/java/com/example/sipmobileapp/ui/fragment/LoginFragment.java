@@ -21,8 +21,11 @@ import com.example.sipmobileapp.databinding.FragmentLoginBinding;
 import com.example.sipmobileapp.model.ServerData;
 import com.example.sipmobileapp.model.UserParameter;
 import com.example.sipmobileapp.model.UserResult;
-import com.example.sipmobileapp.utils.SipMobileAppPreferences;
 import com.example.sipmobileapp.ui.activity.PatientContainerActivity;
+import com.example.sipmobileapp.ui.dialog.ErrorDialogFragment;
+import com.example.sipmobileapp.ui.dialog.RequiredServerDataDialogFragment;
+import com.example.sipmobileapp.ui.dialog.ServerDataListDialogFragment;
+import com.example.sipmobileapp.utils.SipMobileAppPreferences;
 import com.example.sipmobileapp.viewmodel.LoginViewModel;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
@@ -31,8 +34,7 @@ import java.util.List;
 
 public class LoginFragment extends Fragment {
     private FragmentLoginBinding mBinding;
-    private LoginViewModel mViewModel;
-
+    private LoginViewModel viewModel;
     private String lastValueSpinner;
 
     public static LoginFragment newInstance() {
@@ -45,8 +47,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+        createViewModel();
     }
 
     @Override
@@ -59,14 +60,14 @@ public class LoginFragment extends Fragment {
                 container,
                 false);
 
-        if (mViewModel.getServerDataList().size() == 0 || mViewModel.getServerDataList() == null) {
+        if (viewModel.getServerDataList().size() == 0 || viewModel.getServerDataList() == null) {
             RequiredServerDataDialogFragment fragment = RequiredServerDataDialogFragment.newInstance();
             fragment.show(getParentFragmentManager(), RequiredServerDataDialogFragment.TAG);
         } else {
             setupSpinner();
         }
 
-        handleClicked();
+        handleEvents();
 
         return mBinding.getRoot();
     }
@@ -77,8 +78,12 @@ public class LoginFragment extends Fragment {
         setupObserver();
     }
 
+    private void createViewModel() {
+        viewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+    }
+
     private void setupSpinner() {
-        List<ServerData> serverDataList = mViewModel.getServerDataList();
+        List<ServerData> serverDataList = viewModel.getServerDataList();
         List<String> centerNameList = new ArrayList<>();
         for (ServerData serverData : serverDataList) {
             centerNameList.add(serverData.getCenterName());
@@ -89,7 +94,7 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    private void handleClicked() {
+    private void handleEvents() {
         mBinding.imgBtnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,7 +116,7 @@ public class LoginFragment extends Fragment {
         mBinding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mViewModel.getServerDataList() == null || mViewModel.getServerDataList().size() == 0) {
+                if (viewModel.getServerDataList() == null || viewModel.getServerDataList().size() == 0) {
                     RequiredServerDataDialogFragment fragment = RequiredServerDataDialogFragment.newInstance();
                     fragment.show(getParentFragmentManager(), RequiredServerDataDialogFragment.TAG);
                 } else {
@@ -124,10 +129,11 @@ public class LoginFragment extends Fragment {
                     String password = mBinding.edTxtPassword.getText().toString();
 
                     UserParameter userParameter = new UserParameter(userName, password);
-                    ServerData serverData = mViewModel.getServerData(lastValueSpinner);
+                    ServerData serverData = viewModel.getServerData(lastValueSpinner);
 
-                    mViewModel.getUserLoginService(serverData.getIPAddress() + ":" + serverData.getPort());
-                    mViewModel.userLogin(userParameter);
+                    viewModel.getUserLoginService(serverData.getIPAddress() + ":" + serverData.getPort());
+                    String path = "/api/v1/users/login/";
+                    viewModel.login(path, userParameter);
                 }
             }
         });
@@ -141,82 +147,78 @@ public class LoginFragment extends Fragment {
     }
 
     private void setupObserver() {
-        mViewModel.getInsertNotifySpinner().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        viewModel.getInsertNotifySpinner().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isInsertServerData) {
                 setupSpinner();
             }
         });
 
-        mViewModel.getDeleteNotifySpinner().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        viewModel.getDeleteNotifySpinner().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isDeleteServerData) {
                 setupSpinner();
             }
         });
 
-        mViewModel.getUserLoginSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<UserResult>() {
+        viewModel.getLoginResultSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<UserResult>() {
             @Override
             public void onChanged(UserResult userResult) {
-                SipMobileAppPreferences.setUserLoginKey(getContext(), userResult.getUsers()[0].getUserLoginKey());
-                SipMobileAppPreferences.setCenterName(getContext(), lastValueSpinner);
-                SipMobileAppPreferences.setUsername(getContext(), userResult.getUsers()[0].getUser_Name());
-                Intent intent = PatientContainerActivity.newIntent(getContext());
-                startActivity(intent);
-                getActivity().finish();
+                if (userResult != null) {
+                    if (userResult.getErrorCode().equals("0")) {
+                        SipMobileAppPreferences.setUserLoginKey(getContext(), userResult.getUsers()[0].getUserLoginKey());
+                        SipMobileAppPreferences.setCenterName(getContext(), lastValueSpinner);
+                        Intent intent = PatientContainerActivity.newIntent(getContext());
+                        startActivity(intent);
+                        getActivity().finish();
+                    } else {
+                        mBinding.loadingLayout.setVisibility(View.GONE);
+                        mBinding.edTxtUserName.setEnabled(true);
+                        mBinding.edTxtPassword.setEnabled(true);
+                        mBinding.btnLogin.setEnabled(true);
+                        handleError(userResult.getError());
+                    }
+                }
+
             }
         });
 
-        mViewModel.getErrorUserLoginSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
+        viewModel.getNoConnectionExceptionHappenSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String message) {
                 mBinding.loadingLayout.setVisibility(View.GONE);
                 mBinding.edTxtUserName.setEnabled(true);
                 mBinding.edTxtPassword.setEnabled(true);
                 mBinding.btnLogin.setEnabled(true);
-
-                ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(message);
-                fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
+                handleError(message);
             }
         });
 
-        mViewModel.getNoConnectivitySingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
+        viewModel.getTimeoutExceptionHappenSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String message) {
                 mBinding.loadingLayout.setVisibility(View.GONE);
                 mBinding.edTxtUserName.setEnabled(true);
                 mBinding.edTxtPassword.setEnabled(true);
                 mBinding.btnLogin.setEnabled(true);
-
-                ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(message);
-                fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
+                handleError(message);
             }
         });
 
-        mViewModel.getTimeOutExceptionHappenSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isTimeOutExceptionHappen) {
-                mBinding.loadingLayout.setVisibility(View.GONE);
-                mBinding.edTxtUserName.setEnabled(true);
-                mBinding.edTxtPassword.setEnabled(true);
-                mBinding.btnLogin.setEnabled(true);
-
-                ErrorDialogFragment fragment = ErrorDialogFragment.newInstance("اتصال به اینترنت با خطا مواجه شد");
-                fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
-            }
-        });
-
-        mViewModel.getWrongAddressSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
+        viewModel.getWrongIpAddressSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String message) {
                 mBinding.loadingLayout.setVisibility(View.GONE);
                 mBinding.edTxtUserName.setEnabled(true);
                 mBinding.edTxtPassword.setEnabled(true);
                 mBinding.btnLogin.setEnabled(true);
-
-                ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(message);
-                fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
+                handleError(message);
             }
         });
+    }
+
+    private void handleError(String message) {
+        ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(message);
+        fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
     }
 }

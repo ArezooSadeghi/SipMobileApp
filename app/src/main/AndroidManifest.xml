@@ -18,15 +18,15 @@
         android:roundIcon="@mipmap/ic_sip_app_launcher_round"
         android:theme="@style/Theme.SipMobileApp"
         android:usesCleartextTraffic="true">
+        <activity android:name=".ui.activity.FullScreenPhotoContainerActivity"></activity>
         <activity
             android:name=".ui.activity.AttachmentContainerActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".ui.activity.AnswerContainerActivity" />
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
-            android:name=".ui.activity.GalleryContainerActivity"
+            android:name=".ui.activity.PhotoGalleryContainerActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.PatientContainerActivity"

@@ -14,9 +14,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitInstance {
+
     public static String BASE_URL = "";
 
-    public static Retrofit userLoginRetrofitInstance(Type type, Object typeAdapter, Context context) {
+    public static Retrofit getRI(Type type, Object typeAdapter, Context context) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new ConnectivityInterceptor(context))
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -26,87 +27,7 @@ public class RetrofitInstance {
                 .build();
 
         return new Retrofit.Builder()
-                .baseUrl("http://" + BASE_URL + "/api/v1/users/login/")
-                .addConverterFactory(createConverter(type, typeAdapter))
-                .client(client)
-                .build();
-    }
-
-    public static Retrofit searchRetrofitInstance(Type type, Object typeAdapter, Context context) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new ConnectivityInterceptor(context))
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .cache(null)
-                .build();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://" + BASE_URL + "/api/v1/patients/search/")
-                .addConverterFactory(createConverter(type, typeAdapter))
-                .client(client)
-                .build();
-    }
-
-    public static Retrofit patientAttachmentListRetrofitInstance(Type type, Object typeAdapter, Context context) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new ConnectivityInterceptor(context))
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .cache(null)
-                .build();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://" + BASE_URL + "/api/v1/attachs/ListBySickID/")
-                .addConverterFactory(createConverter(type, typeAdapter))
-                .client(client)
-                .build();
-    }
-
-    public static Retrofit attachInfoRetrofitInstance(Type type, Object typeAdapter, Context context) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new ConnectivityInterceptor(context))
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .cache(null)
-                .build();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://" + BASE_URL + "/api/v1/attachs/Info/")
-                .addConverterFactory(createConverter(type, typeAdapter))
-                .client(client)
-                .build();
-    }
-
-    public static Retrofit addAttachRetrofitInstance(Type type, Object typeAdapter, Context context) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new ConnectivityInterceptor(context))
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .cache(null)
-                .build();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://" + BASE_URL + "/api/v1/attachs/Add/")
-                .addConverterFactory(createConverter(type, typeAdapter))
-                .client(client)
-                .build();
-    }
-
-    public static Retrofit deleteAttachRetrofitInstance(Type type, Object typeAdapter, Context context) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new ConnectivityInterceptor(context))
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .cache(null)
-                .build();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://" + BASE_URL + "/api/v1/attachs/Delete/")
+                .baseUrl("http://" + BASE_URL)
                 .addConverterFactory(createConverter(type, typeAdapter))
                 .client(client)
                 .build();

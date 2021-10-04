@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.ui.fragment;
+package com.example.sipmobileapp.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class ServerDataListDialogFragment extends DialogFragment {
     private FragmentServerDataListDialogBinding mBinding;
-    private LoginViewModel mViewModel;
+    private LoginViewModel viewModel;
 
     public static final String TAG = ServerDataListDialogFragment.class.getSimpleName();
 
@@ -39,8 +39,7 @@ public class ServerDataListDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+        createViewModel();
         setupObserver();
     }
 
@@ -55,7 +54,7 @@ public class ServerDataListDialogFragment extends DialogFragment {
 
         initViews();
         setupAdapter();
-        handleClicked();
+        handleEvents();
 
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setView(mBinding.getRoot())
@@ -64,15 +63,19 @@ public class ServerDataListDialogFragment extends DialogFragment {
         return dialog;
     }
 
+    private void createViewModel() {
+        viewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+    }
+
     private void setupObserver() {
-        mViewModel.getInsertNotifyServerDataList().observe(this, new Observer<Boolean>() {
+        viewModel.getInsertNotifyServerDataList().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isServerDataInsert) {
                 setupAdapter();
             }
         });
 
-        mViewModel.getEditClicked().observe(this, new Observer<ServerData>() {
+        viewModel.getEditClicked().observe(this, new Observer<ServerData>() {
             @Override
             public void onChanged(ServerData serverData) {
                 AddEditServerDataDialogFragment fragment = AddEditServerDataDialogFragment.newInstance(serverData.getCenterName(), serverData.getIPAddress(), serverData.getPort(), false);
@@ -80,13 +83,13 @@ public class ServerDataListDialogFragment extends DialogFragment {
             }
         });
 
-        mViewModel.getDeleteClicked().observe(this, new Observer<ServerData>() {
+        viewModel.getDeleteClicked().observe(this, new Observer<ServerData>() {
             @Override
             public void onChanged(ServerData serverData) {
-                mViewModel.deleteServerData(serverData);
-                mViewModel.getDeleteNotifySpinner().setValue(true);
+                viewModel.deleteServerData(serverData);
+                viewModel.getDeleteNotifySpinner().setValue(true);
                 setupAdapter();
-                List<ServerData> serverDataList = mViewModel.getServerDataList();
+                List<ServerData> serverDataList = viewModel.getServerDataList();
                 if (serverDataList.size() == 0) {
                     RequiredServerDataDialogFragment fragment = RequiredServerDataDialogFragment.newInstance();
                     fragment.show(getParentFragmentManager(), RequiredServerDataDialogFragment.TAG);
@@ -104,12 +107,12 @@ public class ServerDataListDialogFragment extends DialogFragment {
     }
 
     private void setupAdapter() {
-        List<ServerData> serverDataList = mViewModel.getServerDataList();
-        ServerDataAdapter adapter = new ServerDataAdapter(getContext(), serverDataList, mViewModel);
+        List<ServerData> serverDataList = viewModel.getServerDataList();
+        ServerDataAdapter adapter = new ServerDataAdapter(getContext(), serverDataList, viewModel);
         mBinding.recyclerViewServerData.setAdapter(adapter);
     }
 
-    private void handleClicked() {
+    private void handleEvents() {
         mBinding.fabAddServerData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

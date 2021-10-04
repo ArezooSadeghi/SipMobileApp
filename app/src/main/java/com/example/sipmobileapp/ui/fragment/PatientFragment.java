@@ -27,9 +27,9 @@ import com.example.sipmobileapp.databinding.FragmentPatientBinding;
 import com.example.sipmobileapp.model.PatientInfo;
 import com.example.sipmobileapp.model.PatientResult;
 import com.example.sipmobileapp.model.ServerData;
-import com.example.sipmobileapp.ui.activity.AnswerContainerActivity;
-import com.example.sipmobileapp.ui.activity.GalleryContainerActivity;
+import com.example.sipmobileapp.ui.activity.PhotoGalleryContainerActivity;
 import com.example.sipmobileapp.ui.activity.LoginContainerActivity;
+import com.example.sipmobileapp.ui.dialog.ErrorDialogFragment;
 import com.example.sipmobileapp.utils.SipMobileAppPreferences;
 import com.example.sipmobileapp.viewmodel.PatientViewModel;
 import com.skydoves.powermenu.OnMenuItemClickListener;
@@ -42,6 +42,8 @@ import java.util.List;
 public class PatientFragment extends Fragment {
     private FragmentPatientBinding binding;
     private PatientViewModel viewModel;
+    private ServerData serverData;
+    private String centerName, userLoginKey;
 
     public static PatientFragment newInstance() {
         PatientFragment fragment = new PatientFragment();
@@ -53,8 +55,8 @@ public class PatientFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        viewModel = new ViewModelProvider(this).get(PatientViewModel.class);
+        createViewModel();
+        initVariables();
     }
 
     @Override
@@ -68,7 +70,7 @@ public class PatientFragment extends Fragment {
                 false);
 
         initViews();
-        handleClicked();
+        handleEvents();
 
         return binding.getRoot();
     }
@@ -79,6 +81,16 @@ public class PatientFragment extends Fragment {
         setupObserver();
     }
 
+    private void createViewModel() {
+        viewModel = new ViewModelProvider(this).get(PatientViewModel.class);
+    }
+
+    private void initVariables() {
+        centerName = SipMobileAppPreferences.getCenterName(getContext());
+        serverData = viewModel.getServerData(centerName);
+        userLoginKey = SipMobileAppPreferences.getUserLoginKey(getContext());
+    }
+
     private void initViews() {
         binding.recyclerViewPatient.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewPatient.addItemDecoration(new DividerItemDecoration(
@@ -86,7 +98,7 @@ public class PatientFragment extends Fragment {
                 DividerItemDecoration.VERTICAL));
     }
 
-    private void handleClicked() {
+    private void handleEvents() {
         binding.imgButtonMore.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
@@ -118,11 +130,9 @@ public class PatientFragment extends Fragment {
             public void onClick(View view) {
                 binding.progressBarLoading.setVisibility(View.VISIBLE);
                 binding.txtNoPatient.setVisibility(View.GONE);
-                String centerName = SipMobileAppPreferences.getCenterName(getContext());
-                ServerData serverData = viewModel.getServerData(centerName);
                 viewModel.getSearchService(serverData.getIPAddress() + ":" + serverData.getPort());
-                String userLoginKey = SipMobileAppPreferences.getUserLoginKey(getContext());
-                viewModel.search(userLoginKey, binding.edTextSearch.getText().toString());
+                String path = "/api/v1/patients/search/";
+                viewModel.fetchPatients(path, userLoginKey, binding.edTextSearch.getText().toString());
             }
         });
 
@@ -132,11 +142,9 @@ public class PatientFragment extends Fragment {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
                     binding.progressBarLoading.setVisibility(View.VISIBLE);
                     binding.txtNoPatient.setVisibility(View.GONE);
-                    String centerName = SipMobileAppPreferences.getCenterName(getContext());
-                    ServerData serverData = viewModel.getServerData(centerName);
                     viewModel.getSearchService(serverData.getIPAddress() + ":" + serverData.getPort());
-                    String userLoginKey = SipMobileAppPreferences.getUserLoginKey(getContext());
-                    viewModel.search(userLoginKey, binding.edTextSearch.getText().toString());
+                    String path = "/api/v1/patients/search/";
+                    viewModel.fetchPatients(path, userLoginKey, binding.edTextSearch.getText().toString());
                     return true;
                 }
                 return false;
@@ -145,68 +153,56 @@ public class PatientFragment extends Fragment {
     }
 
     private void setupObserver() {
-        viewModel.getSearchSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<PatientResult>() {
+        viewModel.getPatientsResultSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<PatientResult>() {
             @Override
             public void onChanged(PatientResult patientResult) {
-                if (patientResult.getPatients() == null || patientResult.getPatients().length == 0) {
-                    binding.progressBarLoading.setVisibility(View.GONE);
-                    binding.recyclerViewPatient.setVisibility(View.GONE);
-                    binding.txtNoPatient.setVisibility(View.VISIBLE);
-                } else {
-                    binding.progressBarLoading.setVisibility(View.GONE);
-                    binding.txtNoPatient.setVisibility(View.GONE);
-                    binding.recyclerViewPatient.setVisibility(View.VISIBLE);
-                    setupAdapter(patientResult.getPatients());
+                if (patientResult != null) {
+                    if (patientResult.getErrorCode().equals("0")) {
+                        if (patientResult.getPatients() == null || patientResult.getPatients().length == 0) {
+                            binding.progressBarLoading.setVisibility(View.GONE);
+                            binding.recyclerViewPatient.setVisibility(View.GONE);
+                            binding.txtNoPatient.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.progressBarLoading.setVisibility(View.GONE);
+                            binding.txtNoPatient.setVisibility(View.GONE);
+                            binding.recyclerViewPatient.setVisibility(View.VISIBLE);
+                            setupAdapter(patientResult.getPatients());
+                        }
+                    } else {
+                        binding.progressBarLoading.setVisibility(View.GONE);
+                        binding.recyclerViewPatient.setVisibility(View.GONE);
+                        binding.txtNoPatient.setVisibility(View.VISIBLE);
+                        handleError(patientResult.getError());
+                    }
                 }
-            }
-        });
-
-        viewModel.getErrorSearchSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String message) {
-                binding.progressBarLoading.setVisibility(View.GONE);
-                binding.recyclerViewPatient.setVisibility(View.GONE);
-                binding.txtNoPatient.setVisibility(View.VISIBLE);
-                ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(message);
-                fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
             }
         });
 
         viewModel.getNavigateToGallery().observe(getViewLifecycleOwner(), new Observer<PatientInfo>() {
             @Override
             public void onChanged(PatientInfo patientInfo) {
-                Intent intent = GalleryContainerActivity.newIntent(getContext(), patientInfo.getSickID());
+                Intent intent = PhotoGalleryContainerActivity.start(getContext(), patientInfo.getSickID());
                 startActivity(intent);
             }
         });
 
-        viewModel.getNoConnectivitySingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
+        viewModel.getNoConnectionExceptionHappenSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String message) {
                 binding.progressBarLoading.setVisibility(View.GONE);
                 binding.recyclerViewPatient.setVisibility(View.GONE);
                 binding.txtNoPatient.setVisibility(View.VISIBLE);
-                ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(message);
-                fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
+                handleError(message);
             }
         });
 
-        viewModel.getTimeOutExceptionHappenSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        viewModel.getTimeoutExceptionHappenSingleLiveEvent().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
-            public void onChanged(Boolean isTimeOutExceptionHappen) {
+            public void onChanged(String message) {
                 binding.progressBarLoading.setVisibility(View.GONE);
                 binding.recyclerViewPatient.setVisibility(View.GONE);
                 binding.txtNoPatient.setVisibility(View.VISIBLE);
-                ErrorDialogFragment fragment = ErrorDialogFragment.newInstance("اتصال به اینترنت با خطا مواجه شد");
-                fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
-            }
-        });
-
-        viewModel.getNavigateToAnswer().observe(getViewLifecycleOwner(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer patientID) {
-                Intent intent = AnswerContainerActivity.newIntent(getContext(), patientID);
-                startActivity(intent);
+                handleError(message);
             }
         });
     }
@@ -216,5 +212,10 @@ public class PatientFragment extends Fragment {
         List<PatientInfo> patientInfoList = Arrays.asList(patients);
         PatientAdapter adapter = new PatientAdapter(getContext(), patientInfoList, viewModel);
         binding.recyclerViewPatient.setAdapter(adapter);
+    }
+
+    private void handleError(String message) {
+        ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(message);
+        fragment.show(getParentFragmentManager(), ErrorDialogFragment.TAG);
     }
 }

@@ -12,4 +12,8 @@
     <string name="port_hint">لطفاport خود را وارد کنید</string>
     <string name="center_name_hint">لطفا نام مرکز را وارد کنید</string>
     <string name="no_patient">نتیجه ای یافت نشد</string>
+    <string name="success_delete_attachment_message">حذف فایل موفقیت آمیز بود</string>
+    <string name="success_attach_message">افزودن فایل موفقیت آمیز بود</string>
+    <string name="timeout_exception_happen_message">اتصال به اینترنت با خطا مواجه شد</string>
+    <string name="no_exist_server_message">سرور موجود نمی باشد</string>
 </resources>

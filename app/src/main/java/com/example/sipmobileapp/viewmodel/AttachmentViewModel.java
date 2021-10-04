@@ -19,23 +19,24 @@ public class AttachmentViewModel extends AndroidViewModel {
 
     private SingleLiveEvent<Boolean> requestPermission = new SingleLiveEvent<>();
     private SingleLiveEvent<Boolean> allowPermission = new SingleLiveEvent<>();
+    private SingleLiveEvent<String> finishWriteToStorage = new SingleLiveEvent<>();
+    private SingleLiveEvent<String> photoClicked = new SingleLiveEvent<>();
+    private SingleLiveEvent<Boolean> yesDeleteClicked = new SingleLiveEvent<>();
+    private SingleLiveEvent<AttachResult> deleteAttachResultSingleLiveEvent;
 
     private SingleLiveEvent<String> convertBitmapToStringBase64 = new SingleLiveEvent<>();
 
-    private SingleLiveEvent<String> noConnectivitySingleLiveEvent;
-    private SingleLiveEvent<Boolean> timeOutExceptionHappenSingleLiveEvent;
+    private SingleLiveEvent<String> noConnectionExceptionHappenSingleLiveEvent;
+    private SingleLiveEvent<String> timeoutExceptionHappenSingleLiveEvent;
 
-    private SingleLiveEvent<AttachResult> patientAttachmentListResultSingleLiveEvent;
-    private SingleLiveEvent<String> errorPatientAttachmentListResultSingleLiveEvent;
+    private SingleLiveEvent<AttachResult> patientAttachmentsResultSingleLiveEvent;
+
 
     private SingleLiveEvent<AttachResult> attachInfoResultSingleLiveEvent;
-    private SingleLiveEvent<String> errorAttachInfoResultSingleLiveEvent;
 
-    private SingleLiveEvent<AttachResult> addAttachResultSingleLiveEvent;
-    private SingleLiveEvent<String> errorAddAttachResultSingleLiveEvent;
 
-    private SingleLiveEvent<AttachResult> deleteAttachResultSingleLiveEvent;
-    private SingleLiveEvent<String> errorDeleteAttachResultSingleLiveEvent;
+    private SingleLiveEvent<AttachResult> attachResultSingleLiveEvent;
+
 
     private SingleLiveEvent<Boolean> showAttachAgainDialog = new SingleLiveEvent<>();
     private SingleLiveEvent<Boolean> noAttachAgain = new SingleLiveEvent<>();
@@ -55,20 +56,16 @@ public class AttachmentViewModel extends AndroidViewModel {
 
         repository = SipMobileAppRepository.getInstance(getApplication());
 
-        noConnectivitySingleLiveEvent = repository.getNoConnectivitySingleLiveEvent();
-        timeOutExceptionHappenSingleLiveEvent = repository.getTimeOutExceptionHappenSingleLiveEvent();
+        noConnectionExceptionHappenSingleLiveEvent = repository.getNoConnectionExceptionHappenSingleLiveEvent();
+        timeoutExceptionHappenSingleLiveEvent = repository.getTimeoutExceptionHappenSingleLiveEvent();
 
-        patientAttachmentListResultSingleLiveEvent = repository.getPatientAttachmentListResultSingleLiveEvent();
-        errorPatientAttachmentListResultSingleLiveEvent = repository.getErrorPatientAttachmentListResultSingleLiveEvent();
+        patientAttachmentsResultSingleLiveEvent = repository.getPatientAttachmentsResultSingleLiveEvent();
 
-        attachInfoResultSingleLiveEvent = repository.getAttachInfoSingleLiveEvent();
-        errorAttachInfoResultSingleLiveEvent = repository.getErrorAttachInfoSingleLiveEvent();
+        attachInfoResultSingleLiveEvent = repository.getAttachInfoResultSingleLiveEvent();
 
-        addAttachResultSingleLiveEvent = repository.getAddAttachSingleLiveEvent();
-        errorAddAttachResultSingleLiveEvent = repository.getErrorAddAttachSingleLiveEvent();
+        attachResultSingleLiveEvent = repository.getAttachResultSingleLiveEvent();
 
-        deleteAttachResultSingleLiveEvent = repository.getDeleteAttachSingleLiveEvent();
-        errorDeleteAttachResultSingleLiveEvent = repository.getErrorDeleteAttachSingleLiveEvent();
+        deleteAttachResultSingleLiveEvent = repository.getDeleteAttachResultSingleLiveEvent();
     }
 
     public SingleLiveEvent<Boolean> getRequestPermission() {
@@ -83,36 +80,28 @@ public class AttachmentViewModel extends AndroidViewModel {
         return convertBitmapToStringBase64;
     }
 
-    public SingleLiveEvent<String> getNoConnectivitySingleLiveEvent() {
-        return noConnectivitySingleLiveEvent;
+    public SingleLiveEvent<String> getNoConnectionExceptionHappenSingleLiveEvent() {
+        return noConnectionExceptionHappenSingleLiveEvent;
     }
 
-    public SingleLiveEvent<Boolean> getTimeOutExceptionHappenSingleLiveEvent() {
-        return timeOutExceptionHappenSingleLiveEvent;
+    public SingleLiveEvent<String> getTimeoutExceptionHappenSingleLiveEvent() {
+        return timeoutExceptionHappenSingleLiveEvent;
     }
 
-    public SingleLiveEvent<AttachResult> getPatientAttachmentListResultSingleLiveEvent() {
-        return patientAttachmentListResultSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getErrorPatientAttachmentListResultSingleLiveEvent() {
-        return errorPatientAttachmentListResultSingleLiveEvent;
+    public SingleLiveEvent<AttachResult> getPatientAttachmentsResultSingleLiveEvent() {
+        return patientAttachmentsResultSingleLiveEvent;
     }
 
     public SingleLiveEvent<AttachResult> getAttachInfoResultSingleLiveEvent() {
         return attachInfoResultSingleLiveEvent;
     }
 
-    public SingleLiveEvent<String> getErrorAttachInfoResultSingleLiveEvent() {
-        return errorAttachInfoResultSingleLiveEvent;
+    public SingleLiveEvent<AttachResult> getAttachResultSingleLiveEvent() {
+        return attachResultSingleLiveEvent;
     }
 
-    public SingleLiveEvent<AttachResult> getAddAttachResultSingleLiveEvent() {
-        return addAttachResultSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getErrorAddAttachResultSingleLiveEvent() {
-        return errorAddAttachResultSingleLiveEvent;
+    public SingleLiveEvent<AttachResult> getDeleteAttachResultSingleLiveEvent() {
+        return deleteAttachResultSingleLiveEvent;
     }
 
     public SingleLiveEvent<Boolean> getShowAttachAgainDialog() {
@@ -127,7 +116,7 @@ public class AttachmentViewModel extends AndroidViewModel {
         return yesAttachAgain;
     }
 
-    public SingleLiveEvent<AttachResult> getUpdateGallery() {
+    public SingleLiveEvent<AttachResult> getRefresh() {
         return updateGallery;
     }
 
@@ -135,59 +124,55 @@ public class AttachmentViewModel extends AndroidViewModel {
         return showFullScreenImage;
     }
 
-    public SingleLiveEvent<AttachResult> getDeleteAttachResultSingleLiveEvent() {
-        return deleteAttachResultSingleLiveEvent;
-    }
-
-    public SingleLiveEvent<String> getErrorDeleteAttachResultSingleLiveEvent() {
-        return errorDeleteAttachResultSingleLiveEvent;
+    public SingleLiveEvent<Map<Uri, String>> getTestShowFullScreenImage() {
+        return testShowFullScreenImage;
     }
 
     public SingleLiveEvent<Integer> getDeleteImageFromGallery() {
         return deleteImageFromGallery;
     }
 
-    public SingleLiveEvent<Map<Uri, String>> getTestShowFullScreenImage() {
-        return testShowFullScreenImage;
-    }
-
     public SingleLiveEvent<Boolean> getYesDelete() {
         return yesDelete;
+    }
+
+    public SingleLiveEvent<String> getFinishWriteToStorage() {
+        return finishWriteToStorage;
+    }
+
+    public SingleLiveEvent<String> getPhotoClicked() {
+        return photoClicked;
+    }
+
+    public SingleLiveEvent<Boolean> getYesDeleteClicked() {
+        return yesDeleteClicked;
     }
 
     public ServerData getServerData(String centerName) {
         return repository.getServerData(centerName);
     }
 
-    public void getPatientAttachmentListService(String newBaseUrl) {
-        repository.getPatientAttachmentListService(newBaseUrl);
+    public void getServicePatientResult(String newBaseUrl) {
+        repository.getServicePatientResult(newBaseUrl);
     }
 
-    public void getAttachInfoService(String newBaseUrl) {
-        repository.getAttachInfoService(newBaseUrl);
+    public void getServiceAttachResult(String newBaseUrl) {
+        repository.getServiceAttachResult(newBaseUrl);
     }
 
-    public void getAddAttachService(String newBaseUrl) {
-        repository.getAddAttachService(newBaseUrl);
+    public void fetchPatientAttachments(String path, String userLoginKey, int sickID) {
+        repository.fetchPatientAttachments(path, userLoginKey, sickID);
     }
 
-    public void getDeleteAttachService(String newBaseUrl) {
-        repository.getDeleteAttachService(newBaseUrl);
+    public void fetchAttachInfo(String path, String userLoginKey, int attachID) {
+        repository.fetchAttachInfo(path, userLoginKey, attachID);
     }
 
-    public void patientAttachmentList(String userLoginKey, int sickID) {
-        repository.patientAttachmentList(userLoginKey, sickID);
+    public void attach(String path, String userLoginKey, AttachParameter attachParameter) {
+        repository.attach(path, userLoginKey, attachParameter);
     }
 
-    public void attachInfo(String userLoginKey, int attachID) {
-        repository.attachInfo(userLoginKey, attachID);
-    }
-
-    public void addAttach(String userLoginKey, AttachParameter attachParameter) {
-        repository.addAttach(userLoginKey, attachParameter);
-    }
-
-    public void deleteAttach(String userLoginKey, int attachID) {
-        repository.deleteAttach(userLoginKey, attachID);
+    public void deleteAttach(String path, String userLoginKey, int attachID) {
+        repository.deleteAttach(path, userLoginKey, attachID);
     }
 }

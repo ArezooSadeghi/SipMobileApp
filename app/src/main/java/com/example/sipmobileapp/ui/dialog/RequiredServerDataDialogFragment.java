@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.ui.fragment;
+package com.example.sipmobileapp.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.ui.fragment;
+package com.example.sipmobileapp.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -23,10 +23,10 @@ import com.example.sipmobileapp.viewmodel.LoginViewModel;
 import java.util.List;
 
 public class AddEditServerDataDialogFragment extends DialogFragment {
-    private FragmentAddEditServerDataDialogBinding mBinding;
-    private LoginViewModel mViewModel;
+    private FragmentAddEditServerDataDialogBinding binding;
+    private LoginViewModel viewModel;
 
-    private String mCenterName;
+    private String centerName;
 
     private static final String ARGS_CENTER_NAME = "centerName";
     private static final String ARGS_IP_ADDRESS = "ipAddress";
@@ -49,24 +49,23 @@ public class AddEditServerDataDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+        createViewModel();
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(LayoutInflater.from(
+        binding = DataBindingUtil.inflate(LayoutInflater.from(
                 getContext()),
                 R.layout.fragment_add_edit_server_data_dialog,
                 null,
                 false);
 
         initViews();
-        handleClicked();
+        handleEvents();
 
         AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setView(mBinding.getRoot())
+                .setView(binding.getRoot())
                 .create();
 
         dialog.setCancelable(false);
@@ -75,27 +74,31 @@ public class AddEditServerDataDialogFragment extends DialogFragment {
         return dialog;
     }
 
+    private void createViewModel() {
+        viewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+    }
+
     private void initViews() {
-        mCenterName = getArguments().getString(ARGS_CENTER_NAME);
+        centerName = getArguments().getString(ARGS_CENTER_NAME);
         String ipAddress = getArguments().getString(ARGS_IP_ADDRESS);
         String port = getArguments().getString(ARGS_PORT);
 
-        mBinding.edTxtCenterName.setText(mCenterName);
-        mBinding.edTxtIpAddress.setText(ipAddress);
-        mBinding.edTxtPort.setText(port);
+        binding.edTxtCenterName.setText(centerName);
+        binding.edTxtIpAddress.setText(ipAddress);
+        binding.edTxtPort.setText(port);
 
-        mBinding.edTxtCenterName.setSelection(mBinding.edTxtCenterName.getText().length());
-        mBinding.edTxtIpAddress.setSelection(mBinding.edTxtIpAddress.getText().length());
-        mBinding.edTxtPort.setSelection(mBinding.edTxtPort.getText().length());
+        binding.edTxtCenterName.setSelection(binding.edTxtCenterName.getText().length());
+        binding.edTxtIpAddress.setSelection(binding.edTxtIpAddress.getText().length());
+        binding.edTxtPort.setSelection(binding.edTxtPort.getText().length());
     }
 
-    private void handleClicked() {
-        mBinding.fabOk.setOnClickListener(new View.OnClickListener() {
+    private void handleEvents() {
+        binding.fabOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String centerName = mBinding.edTxtCenterName.getText().toString();
-                String ipAddress = mBinding.edTxtIpAddress.getText().toString();
-                String port = mBinding.edTxtPort.getText().toString();
+                String centerName = binding.edTxtCenterName.getText().toString();
+                String ipAddress = binding.edTxtIpAddress.getText().toString();
+                String port = binding.edTxtPort.getText().toString();
                 if (centerName.isEmpty() || ipAddress.isEmpty() || port.isEmpty()) {
                     ErrorDialogFragment fragment = ErrorDialogFragment.newInstance("لطفا موارد خواسته شده را تکمیل کنید");
                     fragment.show(getChildFragmentManager(), ErrorDialogFragment.TAG);
@@ -103,40 +106,40 @@ public class AddEditServerDataDialogFragment extends DialogFragment {
                     ErrorDialogFragment fragment = ErrorDialogFragment.newInstance("فرمت آدرس ip نادرست می باشد");
                     fragment.show(getChildFragmentManager(), ErrorDialogFragment.TAG);
                 } else {
-                    if (isRepeatedCenterName(centerName) & !centerName.equals(mCenterName)) {
+                    if (isRepeatedCenterName(centerName) & !centerName.equals(AddEditServerDataDialogFragment.this.centerName)) {
                         ErrorDialogFragment fragment = ErrorDialogFragment.newInstance("نام مرکز تکراری می باشد");
                         fragment.show(getChildFragmentManager(), ErrorDialogFragment.TAG);
                     } else {
                         ServerData serverData = new ServerData(centerName, convertPerDigitToEn(ipAddress), convertPerDigitToEn(port));
                         boolean isAdd = getArguments().getBoolean(ARGS_IS_ADD);
                         if (!isAdd) {
-                            ServerData preServerData = mViewModel.getServerData(mCenterName);
-                            mViewModel.deleteServerData(preServerData);
+                            ServerData preServerData = viewModel.getServerData(AddEditServerDataDialogFragment.this.centerName);
+                            viewModel.deleteServerData(preServerData);
                         }
-                        mViewModel.insertServerData(serverData);
-                        mViewModel.getInsertNotifySpinner().setValue(true);
-                        mViewModel.getInsertNotifyServerDataList().setValue(true);
+                        viewModel.insertServerData(serverData);
+                        viewModel.getInsertNotifySpinner().setValue(true);
+                        viewModel.getInsertNotifyServerDataList().setValue(true);
                         dismiss();
                     }
                 }
             }
         });
 
-        mBinding.edTxtCenterName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        binding.edTxtCenterName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionID, KeyEvent keyEvent) {
                 if (actionID == 0 || actionID == EditorInfo.IME_ACTION_DONE) {
-                    mBinding.edTxtIpAddress.requestFocus();
+                    binding.edTxtIpAddress.requestFocus();
                 }
                 return false;
             }
         });
 
-        mBinding.edTxtIpAddress.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        binding.edTxtIpAddress.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionID, KeyEvent keyEvent) {
                 if (actionID == 0 || actionID == EditorInfo.IME_ACTION_DONE) {
-                    mBinding.edTxtPort.requestFocus();
+                    binding.edTxtPort.requestFocus();
                 }
                 return false;
             }
@@ -175,7 +178,7 @@ public class AddEditServerDataDialogFragment extends DialogFragment {
     }
 
     private boolean isRepeatedCenterName(String centerName) {
-        List<ServerData> serverDataList = mViewModel.getServerDataList();
+        List<ServerData> serverDataList = viewModel.getServerDataList();
         if (serverDataList != null & serverDataList.size() > 0) {
             for (ServerData serverData : serverDataList) {
                 if (serverData.getCenterName().equals(centerName)) {

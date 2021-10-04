@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:layoutDirection="ltr"
         android:padding="20dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,9 +25,8 @@
                 android:id="@+id/txt_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/title_error_bg"
+                android:background="@drawable/title_success_bg"
                 android:padding="10dp"
-                android:text="خطا"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -38,14 +38,14 @@
                 android:layout_height="25dp"
                 android:layout_marginLeft="10dp"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_info"
+                android:src="@drawable/ic_done"
                 app:layout_constraintBottom_toBottomOf="@id/txt_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/txt_title"
                 app:tint="@color/white" />
 
             <TextView
-                android:id="@+id/txt_error_message"
+                android:id="@+id/txt_success_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -65,11 +65,11 @@
             android:layout_height="40dp"
             android:layout_marginLeft="80dp"
             android:layout_marginRight="80dp"
-            android:background="@drawable/error_button_bg"
+            android:background="@drawable/success_button_bg"
             android:text="بستن"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:backgroundTint="#CC0000"
+            app:backgroundTint="#4BB543"
             app:layout_constraintBottom_toBottomOf="@id/layoutDialog"
             app:layout_constraintTop_toBottomOf="@id/layoutDialog" />
 

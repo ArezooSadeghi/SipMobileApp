@@ -1,4 +1,4 @@
-package com.example.sipmobileapp.ui.fragment;
+package com.example.sipmobileapp.ui.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -13,17 +13,17 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sipmobileapp.R;
-import com.example.sipmobileapp.databinding.FragmentDeleteQuestionDialogBinding;
+import com.example.sipmobileapp.databinding.FragmentAttachAgainDialogBinding;
 import com.example.sipmobileapp.viewmodel.AttachmentViewModel;
 
-public class DeleteQuestionDialogFragment extends DialogFragment {
-    private FragmentDeleteQuestionDialogBinding binding;
+public class AttachAgainDialogFragment extends DialogFragment {
+    private FragmentAttachAgainDialogBinding binding;
     private AttachmentViewModel viewModel;
 
-    public static final String TAG = DeleteQuestionDialogFragment.class.getSimpleName();
+    public static final String TAG = AttachAgainDialogFragment.class.getSimpleName();
 
-    public static DeleteQuestionDialogFragment newInstance() {
-        DeleteQuestionDialogFragment fragment = new DeleteQuestionDialogFragment();
+    public static AttachAgainDialogFragment newInstance() {
+        AttachAgainDialogFragment fragment = new AttachAgainDialogFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -32,8 +32,7 @@ public class DeleteQuestionDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        viewModel = new ViewModelProvider(requireActivity()).get(AttachmentViewModel.class);
+        createViewModel();
     }
 
     @NonNull
@@ -41,11 +40,11 @@ public class DeleteQuestionDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(LayoutInflater.from(
                 getContext()),
-                R.layout.fragment_delete_question_dialog,
+                R.layout.fragment_attach_again_dialog,
                 null,
                 false);
 
-        handleClicked();
+        handleEvents();
 
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setView(binding.getRoot())
@@ -57,10 +56,15 @@ public class DeleteQuestionDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    private void handleClicked() {
+    private void createViewModel() {
+        viewModel = new ViewModelProvider(requireActivity()).get(AttachmentViewModel.class);
+    }
+
+    private void handleEvents() {
         binding.btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                viewModel.getNoAttachAgain().setValue(true);
                 dismiss();
             }
         });
@@ -68,7 +72,7 @@ public class DeleteQuestionDialogFragment extends DialogFragment {
         binding.btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewModel.getYesDelete().setValue(true);
+                viewModel.getYesAttachAgain().setValue(true);
                 dismiss();
             }
         });

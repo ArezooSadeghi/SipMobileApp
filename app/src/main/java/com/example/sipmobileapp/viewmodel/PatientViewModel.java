@@ -13,11 +13,10 @@ import com.example.sipmobileapp.repository.SipMobileAppRepository;
 public class PatientViewModel extends AndroidViewModel {
     private SipMobileAppRepository repository;
 
-    private SingleLiveEvent<PatientResult> searchSingleLiveEvent;
-    private SingleLiveEvent<String> errorSearchSingleLiveEvent;
+    private SingleLiveEvent<PatientResult> patientsResultSingleLiveEvent;
 
-    private SingleLiveEvent<String> noConnectivitySingleLiveEvent;
-    private SingleLiveEvent<Boolean> timeOutExceptionHappenSingleLiveEvent;
+    private SingleLiveEvent<String> noConnectionExceptionHappenSingleLiveEvent;
+    private SingleLiveEvent<String> timeoutExceptionHappenSingleLiveEvent;
 
     private SingleLiveEvent<PatientInfo> navigateToGallery = new SingleLiveEvent<>();
 
@@ -28,27 +27,22 @@ public class PatientViewModel extends AndroidViewModel {
 
         repository = SipMobileAppRepository.getInstance(getApplication());
 
-        searchSingleLiveEvent = repository.getSearchSingleLiveEvent();
-        errorSearchSingleLiveEvent = repository.getErrorSearchSingleLiveEvent();
+        patientsResultSingleLiveEvent = repository.getPatientsResultSingleLiveEvent();
 
-        noConnectivitySingleLiveEvent = repository.getNoConnectivitySingleLiveEvent();
-        timeOutExceptionHappenSingleLiveEvent = repository.getTimeOutExceptionHappenSingleLiveEvent();
+        noConnectionExceptionHappenSingleLiveEvent = repository.getNoConnectionExceptionHappenSingleLiveEvent();
+        timeoutExceptionHappenSingleLiveEvent = repository.getTimeoutExceptionHappenSingleLiveEvent();
     }
 
-    public SingleLiveEvent<PatientResult> getSearchSingleLiveEvent() {
-        return searchSingleLiveEvent;
+    public SingleLiveEvent<PatientResult> getPatientsResultSingleLiveEvent() {
+        return patientsResultSingleLiveEvent;
     }
 
-    public SingleLiveEvent<String> getErrorSearchSingleLiveEvent() {
-        return errorSearchSingleLiveEvent;
+    public SingleLiveEvent<String> getNoConnectionExceptionHappenSingleLiveEvent() {
+        return noConnectionExceptionHappenSingleLiveEvent;
     }
 
-    public SingleLiveEvent<String> getNoConnectivitySingleLiveEvent() {
-        return noConnectivitySingleLiveEvent;
-    }
-
-    public SingleLiveEvent<Boolean> getTimeOutExceptionHappenSingleLiveEvent() {
-        return timeOutExceptionHappenSingleLiveEvent;
+    public SingleLiveEvent<String> getTimeoutExceptionHappenSingleLiveEvent() {
+        return timeoutExceptionHappenSingleLiveEvent;
     }
 
     public SingleLiveEvent<PatientInfo> getNavigateToGallery() {
@@ -64,10 +58,10 @@ public class PatientViewModel extends AndroidViewModel {
     }
 
     public void getSearchService(String newBaseUrl) {
-        repository.getSearchService(newBaseUrl);
+        repository.getServicePatientResult(newBaseUrl);
     }
 
-    public void search(String userLoginKey, String patientName) {
-        repository.search(userLoginKey, patientName);
+    public void fetchPatients(String path, String userLoginKey, String patientName) {
+        repository.fetchPatients(path, userLoginKey, patientName);
     }
 }
